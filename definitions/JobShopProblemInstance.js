@@ -36,7 +36,7 @@ function JSSPProblemInstance(n,m){
                 this.numMachines = parseInt(split_by_space[1])
             } else {
                 const split_by_space = line.split(" ")
-                const machineTimeArr = split_by_space.map(s => parseInt(s))
+                const machineTimeArr = split_by_space.filter(item => !isNaN(parseInt(item))).map(s => parseInt(s))
                 this.jobs.push(machineTimeArr)
             }
         })
@@ -44,7 +44,7 @@ function JSSPProblemInstance(n,m){
 }
 
 const a = new JSSPProblemInstance()
-a.generateJSSPFromTextFile("demo.txt")
+a.generateJSSPFromTextFile("abz7.txt")
 console.log(a)
 
 module.exports = JSSPProblemInstance

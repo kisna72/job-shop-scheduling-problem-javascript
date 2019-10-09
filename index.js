@@ -3,10 +3,10 @@ const JSSPGanttChartSolution = require('./definitions/JSSPSolution');
 const JSSP1dToGantt = require('./definitions/JSSPSolution');
 const generateRandom1D = require('./definitions/helpers');
 
-// Constants that can be changed. Problem is defined in a problem definition file.
-const PROBLEM_INSTANCE_FILE = "demo.txt"
-const ALGORITHM_REPETITION = 1000000
-const ALGORITHM_MAX_TIME_SECONDS = 1  //Max time we want the algo to run. TODO use timelimit
+// Parameters for algorithm. Problem is defined in a problem definition file.
+const PROBLEM_INSTANCE_FILE = "abz7.txt"
+const ALGORITHM_REPETITION = 1000000000000
+const ALGORITHM_MAX_TIME_SECONDS = 3 * 60  //Max time we want the algo to run. TODO use timelimit
 
 // Step 1: Create a new instance of JSSPProblemInstance from file.
 const problem = new JSSPProblemInstance() // Instantiate with no data. 
@@ -37,14 +37,15 @@ function runOptimizationAlgo(problem){
             makeSpan = newMakeSpan
             gantt = ganttFromRandInput
             // console.log("Found Better")
-            // console.log("New Make Span " , newMakeSpan)
+            console.log("New Make Span at index ", i, newMakeSpan)
             // console.log(gantt)
             // console.log("============")
         }
     }
+    console.log("Shortest MakeSpan", makeSpan)
     return gantt
 }
 
 const best = runOptimizationAlgo(problem)
 console.log("Best Gantt Chart is ")
-console.log(best)
+//console.log(best)
