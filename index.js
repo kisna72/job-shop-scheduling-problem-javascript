@@ -21,32 +21,28 @@ function runOptimizationAlgo(problem){
     const algoStartTime = (new Date).getTime();
     const algoMaxEndTime = algoStartTime + (ALGORITHM_MAX_TIME_SECONDS * 1000)
     for(let i = 0; i < ALGORITHM_REPETITION; i ++){
-        if( (new Date).getTime() > algoMaxEndTime){
-            console.log("ENding for time")
+        if( (i%100==0) && (new Date).getTime() > algoMaxEndTime){ //Run time check every 100th run.
+            console.log("Ending because of time limit")
             console.log("Ran times : " , i)
             break;
-
         }
         const randomizedInput = generateRandom1D(problem.numMachines, problem.numJobs)
-        //console.log("randomized input " , randomizedInput)
         const problemCopy = Object.assign({}, problem)
         problemCopy.jobs = JSON.parse(JSON.stringify(problem.jobs))
-        //console.log("gantt is generate from rand input...")
-        //console.log("Problem Copy is ", problemCopy)
+
         const ganttFromRandInput = randomizedInput.JSSP1dToGantt(problemCopy)
-        //JSSP1dToGantt(problemCopy, randomizedInput.jssp1d);
         const newMakeSpan = ganttFromRandInput.getMakeSpan();
+
         if(newMakeSpan < makeSpan){
             makeSpan = newMakeSpan
             gantt = ganttFromRandInput
             // console.log("Found Better")
-            console.log("New Make Span " , newMakeSpan)
+            // console.log("New Make Span " , newMakeSpan)
             // console.log(gantt)
             // console.log("============")
         }
     }
     return gantt
-    console.log(gantt)
 }
 
 const best = runOptimizationAlgo(problem)
