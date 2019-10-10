@@ -44,7 +44,7 @@ function JSSPProblemInstance(n,m){
 }
 
 const a = new JSSPProblemInstance()
-a.generateJSSPFromTextFile("abz7.txt")
+a.generateJSSPFromTextFile("demo.txt")
 console.log(a)
 
 module.exports = JSSPProblemInstance
