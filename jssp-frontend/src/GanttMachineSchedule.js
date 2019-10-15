@@ -33,7 +33,7 @@ class GanttMachineSchedule extends React.Component {
     render(){
         let a = [] 
         for(let i = 0; i< this.props.schedule.length; i++){
-            if(i%3 == 0){
+            if(i%3 === 0){
                 const jobid = this.props.schedule[i];
                 const start = this.props.schedule[i + 1];
                 const end = this.props.schedule[i + 2];
@@ -42,13 +42,14 @@ class GanttMachineSchedule extends React.Component {
                 const style = {
                     width:`${_width}%`,
                     height: '20px',
-                    border:'black',
+                    // border:'black',
                     backgroundColor:`${this.jobIdToColour(jobid)}`,
                     position:'absolute',
                     left:`${_startpx}%`,
                     transition: 'all 1s linear'
                 }
-                const width = <div id={`key-${this.props.index}-${jobid}`}  style={style} data-start={start} data-end={end} data-jobid={jobid}>{jobid}</div>
+
+                const width = <div id={`key-${this.props.index}-${jobid}`} className={`job-${jobid}`}  style={style} data-start={start} data-end={end} data-jobid={jobid}>Job-{jobid}</div>
                 a.push(width)
             }
             continue

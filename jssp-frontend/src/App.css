@@ -20,3 +20,42 @@
 .App-link {
   color: #09d3ac;
 }
+
+/*
+For Nav Links
+*/
+nav.header {
+  display: flex;
+  padding: 20px;
+  background-color: #8bc34a;
+  justify-content: space-between;
+}
+nav.header>div{
+  display: flex;
+}
+nav>.nav-brand{
+ font-size: 1.3em;
+ font-weight: 400; 
+}
+nav>.nav-link>nav{
+  padding-right: 10px;
+  padding-left: 10px;;
+}
+nav.sub-header {
+  display: flex;
+  padding: 20px;
+  background-color: gray;
+}
+.sub-header>.nav{
+  border: 1px solid white;
+}
+.nav-link__link:hover{
+  transform: scale(1.1);
+}
+
+
+.explanation{
+  text-align: left;
+  margin-top: 80px;
+  padding: 20px;
+}
