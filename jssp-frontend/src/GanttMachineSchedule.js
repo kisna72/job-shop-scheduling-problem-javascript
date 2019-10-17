@@ -1,4 +1,5 @@
 import React from 'react';
+import jobIdToColour from './jobIdToColor';
 
 /**
  * Idea here is to take an array
@@ -17,19 +18,19 @@ class GanttMachineSchedule extends React.Component {
     }
 
     // Modified from https://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-javascript
-    jobIdToColour(jobid) {
-        const str = `${jobid}color`
-        var hash = 0;
-        for (var i = 0; i < str.length; i++) {
-            hash = str.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        var colour = '#';
-        for (var i = 0; i < 3; i++) {
-            var value = (hash >> (i * 8)) & 0xFF;
-            colour += ('00' + value.toString(16)).substr(-2);
-        }
-        return colour;
-    }
+    // jobIdToColour(jobid) {
+    //     const str = `${jobid}color`
+    //     var hash = 0;
+    //     for (var i = 0; i < str.length; i++) {
+    //         hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    //     }
+    //     var colour = '#';
+    //     for (var i = 0; i < 3; i++) {
+    //         var value = (hash >> (i * 8)) & 0xFF;
+    //         colour += ('00' + value.toString(16)).substr(-2);
+    //     }
+    //     return colour;
+    // }
     render(){
         let a = [] 
         for(let i = 0; i< this.props.schedule.length; i++){
@@ -43,7 +44,7 @@ class GanttMachineSchedule extends React.Component {
                     width:`${_width}%`,
                     height: '20px',
                     // border:'black',
-                    backgroundColor:`${this.jobIdToColour(jobid)}`,
+                    backgroundColor:`${jobIdToColour(jobid)}`,
                     position:'absolute',
                     left:`${_startpx}%`,
                     transition: 'all 1s linear'

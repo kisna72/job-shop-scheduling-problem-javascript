@@ -1,6 +1,8 @@
 import React from 'react';
 import './App.css';
 import GanttChart from './GattChart';
+import jobIdToColour from './jobIdToColor';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   JSSPProblemInstance,
@@ -18,11 +20,34 @@ const ALGORITHM_MAX_TIME_SECONDS = 1  //Max time we want the algo to run. TODO u
 
 // Step 1: Create a new instance of JSSPProblemInstance from file.
 const problem = new JSSPProblemInstance(4,5) // Instantiate with no data. 
-problem.jobs = [ 
-  [ 0, 10, 1, 20, 2, 20, 3, 40, 4, 10 ],
-  [ 1, 20, 0, 10, 3, 30, 2, 50, 4, 30 ],
-  [ 2, 30, 1, 20, 4, 12, 3, 40, 0, 10 ],
-  [ 4, 50, 3, 30, 2, 15, 0, 20, 1, 15 ] ]
+// problem.jobs = [ 
+//   [ 0, 10, 1, 20, 2, 20, 3, 40, 4, 10 ],
+//   [ 1, 20, 0, 10, 3, 30, 2, 50, 4, 30 ],
+//   [ 2, 30, 1, 20, 4, 12, 3, 40, 0, 10 ],
+//   [ 4, 50, 3, 30, 2, 15, 0, 20, 1, 15 ] ]
+
+/**
+ * Water Bottoling Plant that does 4 different types of water bottles. 
+ * Job 0 - Spring Water 16oz
+ * Job 1 - Distilled Water 16 oz
+ * Job 2 - Distilled Water 32 oz
+ * Job 4 - Bottoled Water 32 oz
+ * 
+ * We have 5 machines for different operations
+ * Machine 0 - Bottle Expansion Molding
+ * Machine 1 - Water Cleaning or purifying Machine 
+ * Machine 2 - Pouring water / Filling Process 
+ * Machine 3 - Capping
+ * Machine 4 - Labelling
+ * 
+ * Jobs must be run in the following order
+ */
+problem.jobs = [
+  [0, 10, 1, 30, 2, 10, 3, 10, 4, 8],
+  [0, 50, 1, 60, 2, 10, 3, 10, 4, 16],
+  [0, 30, 1, 90, 2, 20, 3, 10, 4, 16],
+  [0, 15, 1, 90, 2, 20, 3, 10, 4, 10],
+]
 
 class App extends React.Component {
   constructor(props){
@@ -77,36 +102,73 @@ class App extends React.Component {
       <div className="App">
         <NavBar/>
         <SubNavBar/>
-        <h1>Simple Job Shop Optimization</h1>
+        <h3>Water Bottling Plant Schedule Optimization</h3>
+        
         <GanttChart schedule={this.state.schedule}/>
+        
         <div className="explanation">
+        <p>
+The Chart above shows the order in which each operation in a water bottling plant must run on each machine to complete all bottling activities in the most efficient manner. 
+Watch the chart change as the algorithm finds more and more efficient way to run the factory over time. Simulation is slowed down for demonstration purpose.</p>
           <hr></hr>
-          <div>How to read the chart?</div>
-          <p>Job Shop Problem is a class of problems that help you find the most efficient way of running certain number of jobs on 
-            a given set of machines. These types of problems regularly arise in manufacturing floors.
-          </p>
-          <p>The problem solved here has the following problem signature:
-            
-<div>+++++++++++++++++++++++</div>
-<div>A simple Demo</div>
-<div>4 5</div>
-<div>0 10 1 20 2 20 3 40 4 10</div>
-<div>1 20 0 10 3 30 2 50 4 30</div>
-<div>2 30 1 20 4 12 3 40 0 10</div>
-<div>4 50 3 30 2 15 0 20 1 15</div>
-<div>++++++++++++++++++++++++</div>
-First line with numbers 4 and 5 indicates number of job and number of machine respectively. 
+          <h3>Explanation</h3>
 
-Each line after that indicates a job. First job needs to run on machine 0 for 10 units of time, then on machine 1 for 20 units of time
-then on machine 3 for 40 units of time and so on. 
+In this demo, we are trying to optimize how to run a water bottling plant. We have 5 machines for different operations, and various different types of products we need to produce.
 
-Each job needs to run in the specific order described in the line. 
 
+<ol>
+  <li>Machine 0 - Bottle Expansion Molding</li>
+  <li>Machine 1 - Water Cleaning or purifying Machine </li>
+  <li>Machine 2 - Pouring water / Filling Process </li>
+  <li>Machine 3 - Capping</li>
+  <li>Machine 4 - Labelling</li>
+</ol>
+
+This factory produces 4 different types of water bottles, and each water bottling operation must be run in the following order:
+<ol>
+  <li><span style={{backgroundColor:`${jobIdToColour(0)}`}}>Job 0 - Spring Water 16oz </span>
+      <ol>
+        <li>Bottle Expansion - 10 seconds</li>
+        <li>Water Purifying - 30 seconds</li>
+        <li>Water Filling - 10 seconds</li>
+        <li>Bottle Capping - 10 seconds</li>
+        <li>Bottle Labeling - 8 seconds</li>
+      </ol>
+  </li>
+  <li><span style={{backgroundColor:`${jobIdToColour(1)}`}}>Job 1 - Distilled Water 16 oz</span>
+      <ol>
+        <li>Bottle Expansion - 50 seconds</li>
+        <li>Water Purifying - 60 seconds</li>
+        <li>Water Filling - 10 seconds</li>
+        <li>Bottle Capping - 10 seconds</li>
+        <li>Bottle Labeling - 16 seconds</li>
+      </ol>
+  </li>
+  <li><span style={{backgroundColor:`${jobIdToColour(2)}`}}>Job 2 - Distilled Water 32 oz</span>
+      <ol>
+        <li>Bottle Expansion - 30 seconds</li>
+        <li>Water Purifying - 90 seconds</li>
+        <li>Water Filling - 20 seconds</li>
+        <li>Bottle Capping - 10 seconds</li>
+        <li>Bottle Labeling - 16 seconds</li>
+      </ol>
+  </li>
+  <li><span style={{backgroundColor:`${jobIdToColour(3)}`}}>Job 3 - Bottoled Water 32 oz</span>
+      <ol>
+        <li>Bottle Expansion - 15 seconds</li>
+        <li>Water Purifying - 90 seconds</li>
+        <li>Water Filling - 20 seconds</li>
+        <li>Bottle Capping - 10 seconds</li>
+        <li>Bottle Labeling - 10 seconds</li>
+      </ol>
+  </li>
+</ol>
 
 Algorithm that runs in the background finds the most optimal way of running all the jobs in the given order. 
 
-The Chart shows the order in which each job must run on each machine. 
- </p>
+The Chart shows the order in which each job must run on each machine to complete all bottling activities in the most efficient manner. 
+Watch the chart change as the algorithm finds more and more efficient way to run the factory. 
+
         </div>
       </div>
     );

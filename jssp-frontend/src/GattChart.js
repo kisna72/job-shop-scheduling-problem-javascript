@@ -10,6 +10,13 @@ import GanttXTicks from './GanttXTicks';
 //     // [ 1, 31, 60, 3, 61, 90, 2, 91, 130, 0, 131, 170 ],
 //     // [ 3, 1, 50, 2, 61, 72, 1, 111, 140, 0, 171, 180 ] ]
 // }
+const WATER_BOTTLING_WATER_MACHINES = [
+    "Bottle Expansion Mold",
+    "Water Cleaning/ Purifying",
+    "Water Filling",
+    "Bottle Capping",
+    "Bottle Labeling"
+]
 class GanttChart extends React.Component {
     render(){
         console.log(this.props)
@@ -18,22 +25,11 @@ class GanttChart extends React.Component {
         const maxTime = Math.max(...allEnds)
         return (
             <>
-            {/* <table>
-                <tbody>
-                    <tr>
-                        <td>test</td>
-                        <td>test2</td>
-                    </tr>
-                    <tr>
-                        <td>abother test</td>
-                        <td>abother test</td>
-                    </tr>
-                </tbody>
-            </table> */}
             <div className="ganttChartWithY">
                 <div className="ganttChartYAxis">
                     {this.props.schedule.map( (sch,idx)=>{
-                        return <span className="yAxisTick">{`Machine ${idx+1}`}</span>
+                        const machineName = WATER_BOTTLING_WATER_MACHINES[idx]
+                        return <span className="yAxisTick">{`${machineName} Machine`}</span>
                     })}
 
                 </div>
