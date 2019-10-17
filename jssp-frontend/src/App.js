@@ -1,8 +1,7 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import GanttChart from './GattChart';
-import GanttMachineSchedule from './GanttMachineSchedule';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   JSSPProblemInstance,
   JSSPGanttChartSolution,
@@ -10,7 +9,7 @@ import {
   FishesYatesShuffle,
   generateRandom1D
 } from './JSSP';
-
+import { NavBar , SubNavBar } from './components/navbar';
 
 // Parameters for algorithm. Problem is defined in a problem definition file.
 const PROBLEM_INSTANCE_FILE = "demo.txt"
@@ -76,18 +75,8 @@ class App extends React.Component {
     console.log("Render function re-running", this.state.schedule)
     return (
       <div className="App">
-        <main>
-          <nav class="header">
-            <nav class="nav-brand">Job Shop Optimization Algorithm</nav>
-            <div class="nav-link">
-              <nav class="nav-link__link">Simple Problem (jobs=4, machines=5)</nav>
-              <nav class="nav-link__link">Medium (jobs=5, machines=6)</nav>
-            </div>
-          </nav>
-          <nav class="sub-header">
-            <nav class="nav-link__link">Random Algorithm</nav>
-          </nav>
-        </main>
+        <NavBar/>
+        <SubNavBar/>
         <h1>Simple Job Shop Optimization</h1>
         <GanttChart schedule={this.state.schedule}/>
         <div className="explanation">
