@@ -1,22 +1,24 @@
 {
   "files": {
     "main.css": "/job-shop-scheduling-problem-javascript/static/css/main.2914b034.chunk.css",
-    "main.js": "/job-shop-scheduling-problem-javascript/static/js/main.7a1b8ece.chunk.js",
-    "main.js.map": "/job-shop-scheduling-problem-javascript/static/js/main.7a1b8ece.chunk.js.map",
+    "main.js": "/job-shop-scheduling-problem-javascript/static/js/main.03006518.chunk.js",
+    "main.js.map": "/job-shop-scheduling-problem-javascript/static/js/main.03006518.chunk.js.map",
     "runtime-main.js": "/job-shop-scheduling-problem-javascript/static/js/runtime-main.0c818627.js",
     "runtime-main.js.map": "/job-shop-scheduling-problem-javascript/static/js/runtime-main.0c818627.js.map",
-    "static/js/2.cd7cf4a9.chunk.js": "/job-shop-scheduling-problem-javascript/static/js/2.cd7cf4a9.chunk.js",
-    "static/js/2.cd7cf4a9.chunk.js.map": "/job-shop-scheduling-problem-javascript/static/js/2.cd7cf4a9.chunk.js.map",
+    "static/css/2.d7a94725.chunk.css": "/job-shop-scheduling-problem-javascript/static/css/2.d7a94725.chunk.css",
+    "static/js/2.c98849b6.chunk.js": "/job-shop-scheduling-problem-javascript/static/js/2.c98849b6.chunk.js",
+    "static/js/2.c98849b6.chunk.js.map": "/job-shop-scheduling-problem-javascript/static/js/2.c98849b6.chunk.js.map",
     "index.html": "/job-shop-scheduling-problem-javascript/index.html",
-    "precache-manifest.3c77bdb51764c569cbb8957c026c8262.js": "/job-shop-scheduling-problem-javascript/precache-manifest.3c77bdb51764c569cbb8957c026c8262.js",
+    "precache-manifest.b5b60aea7ccc9dd883427ff358364e9e.js": "/job-shop-scheduling-problem-javascript/precache-manifest.b5b60aea7ccc9dd883427ff358364e9e.js",
     "service-worker.js": "/job-shop-scheduling-problem-javascript/service-worker.js",
-    "static/css/main.2914b034.chunk.css.map": "/job-shop-scheduling-problem-javascript/static/css/main.2914b034.chunk.css.map",
-    "static/media/logo.svg": "/job-shop-scheduling-problem-javascript/static/media/logo.25bf045c.svg"
+    "static/css/2.d7a94725.chunk.css.map": "/job-shop-scheduling-problem-javascript/static/css/2.d7a94725.chunk.css.map",
+    "static/css/main.2914b034.chunk.css.map": "/job-shop-scheduling-problem-javascript/static/css/main.2914b034.chunk.css.map"
   },
   "entrypoints": [
     "static/js/runtime-main.0c818627.js",
-    "static/js/2.cd7cf4a9.chunk.js",
+    "static/css/2.d7a94725.chunk.css",
+    "static/js/2.c98849b6.chunk.js",
     "static/css/main.2914b034.chunk.css",
-    "static/js/main.7a1b8ece.chunk.js"
+    "static/js/main.03006518.chunk.js"
   ]
 }
