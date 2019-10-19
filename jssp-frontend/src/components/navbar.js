@@ -10,10 +10,10 @@ function NavBar(props){
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="/">Simple Problem (n=4,m=5) <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="/">Water Bottle Plant Example <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Medium (n=4,m=5)</a>
+                        <a disabled="true" class="nav-link" href="/">Plastics Plant Example (coming soon)</a>
                     </li>
                 </ul>
             </div>
@@ -30,7 +30,7 @@ function SubNavBar(props){
                         <a class="nav-link" href="/">Random Algorithm <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Neighbourhood search algorithm</a>
+                        <a disabled class="nav-link" href="/">Neighbourhood search algorithm (Coming Soon)</a>
                     </li>
                 </ul>
             </div>

@@ -2,27 +2,6 @@ function JSSPProblemInstance(n,m){
     this.numJobs = n;
     this.numMachines = m
     this.jobs = []; // list of lists.
-
-    // this.generateJSSPFromTextFile = async (filePath) => {
-    //     this.jobs = [] // Reset jobs
-    //     var lines = require('fs').readFileSync(filePath, 'utf-8').split('\n')
-    //     lines.forEach( (line, index) => {
-    //         // console.log(line)
-    //         if(index < 2){
-    //             //console.log("UseLess Line : ", line)
-    //         } else if(line.startsWith("++")){
-    //             //console.log("End")
-    //         } else if (index == 2) {
-    //             const split_by_space = line.split(" ")
-    //             this.numJobs = parseInt(split_by_space[0])
-    //             this.numMachines = parseInt(split_by_space[1])
-    //         } else {
-    //             const split_by_space = line.split(" ")
-    //             const machineTimeArr = split_by_space.filter(item => !isNaN(parseInt(item))).map(s => parseInt(s))
-    //             this.jobs.push(machineTimeArr)
-    //         }
-    //     })
-    // }
 }
 
 function JSSPGanttChartSolution(schedule){

@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import GanttChart from './GattChart';
 import jobIdToColour from './jobIdToColor';
-
+import WebWorkerScript from './worker';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   JSSPProblemInstance,
@@ -17,6 +17,7 @@ import { NavBar , SubNavBar } from './components/navbar';
 const PROBLEM_INSTANCE_FILE = "demo.txt"
 const ALGORITHM_REPETITION = 10000
 const ALGORITHM_MAX_TIME_SECONDS = 1  //Max time we want the algo to run. TODO use timelimit
+
 
 // Step 1: Create a new instance of JSSPProblemInstance from file.
 const problem = new JSSPProblemInstance(4,5) // Instantiate with no data. 
@@ -43,10 +44,10 @@ const problem = new JSSPProblemInstance(4,5) // Instantiate with no data.
  * Jobs must be run in the following order
  */
 problem.jobs = [
-  [0, 10, 1, 30, 2, 10, 3, 10, 4, 8],
-  [0, 50, 1, 60, 2, 10, 3, 10, 4, 16],
-  [0, 30, 1, 90, 2, 20, 3, 10, 4, 16],
-  [0, 15, 1, 90, 2, 20, 3, 10, 4, 10],
+  [0, 10, 1, 10, 2, 10, 3, 10, 4, 8],
+  [0, 50, 1, 15, 2, 10, 3, 10, 4, 16],
+  [0, 30, 1, 12, 2, 20, 3, 10, 4, 16],
+  [0, 15, 1, 30, 2, 20, 3, 10, 4, 10],
 ]
 
 class App extends React.Component {
@@ -54,48 +55,76 @@ class App extends React.Component {
     super(props)
     this.state = {
       schedule:[[],[]],
-      makeSpan:Infinity
+      makeSpan:Infinity,
+      iterations:0,
+      workerInstance : new Worker(WebWorkerScript)
     }
-    this.runOptimizationAlgo(problem, 10, 1)
+    //this.runOptimizationAlgo(problem, 10, 1)
+    // setTimeout( () => {this.runOptimizationAlgo(problem, 1, 1)},1000)
   }
+  componentDidMount(){
 
-  runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs ){
-    // let gantt = []
-    let { makeSpan } = this.state
-    // const times = 100
-    const algoStartTime = (new Date).getTime();
-    const algoMaxEndTime = algoStartTime + (algorithmMaxTimeSecs * 1000)
-    for(let i = 0; i < algorithmRepetition; i ++){
-      console.log("running algo")
-        if( (i%100==0) && (new Date).getTime() > algoMaxEndTime){ //Run time check every 100th run.
-            console.log("Ending because of time limit")
-            console.log("Ran times : " , i)
-            break;
+    //var myWorker = new Worker('worker.js');
+    this.state.workerInstance.addEventListener("message", e => {
+        console.log("Received response:");
+        console.log(e.data);
+        // We can have 2 different data types.
+        // {"type":"iterationCount","value":200}
+        // {"type":"newSchedule","value":[[],...]}
+        if(e.data && e.data.type === "iterationCount"){
+          console.log(`New Iteration Count ${e.data.value}`)
+          this.setState({
+            iterations:e.data.value
+          })
         }
-        const randomizedInput = generateRandom1D(problem.numMachines, problem.numJobs)
-        const problemCopy = Object.assign({}, problem)
-        problemCopy.jobs = JSON.parse(JSON.stringify(problem.jobs))
-
-        const ganttFromRandInput = randomizedInput.JSSP1dToGantt(problemCopy)
-        const newMakeSpan = ganttFromRandInput.getMakeSpan();
+        else if(e.data && e.data.type === "newSchedule"){
+          console.log(`New Schedule ${e.data.schedule}`)
+          this.setState({schedule : e.data.schedule, makeSpan:e.data.makeSpan});
+        } else {
+          console.log("generic Message ", e.data);
+        }
         
-        // console.log(ganttFromRandInput.schedule[0])
-        if(newMakeSpan < makeSpan){
-            makeSpan = newMakeSpan
-            // gantt = ganttFromRandInput
-            console.log("Found Better", ganttFromRandInput)
-            console.log("New Make Span at index ", i, newMakeSpan)
-            this.setState({
-              schedule:ganttFromRandInput.schedule,
-              makeSpan:makeSpan
-            })
-        }
-    }
-    
-    // console.log("Shortest MakeSpan", makeSpan)
-    setTimeout( () => {this.runOptimizationAlgo(problem, 1, 1)},1000)
-    //return gantt
+    }, false);
+    this.state.workerInstance.postMessage({algorithmRepetition:10000,problem:problem,algorithmMaxTimeSecs:10})
   }
+
+  // runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs ){
+  //   // let gantt = []
+  //   let { makeSpan } = this.state
+  //   // const times = 100
+  //   const algoStartTime = (new Date).getTime();
+  //   const algoMaxEndTime = algoStartTime + (algorithmMaxTimeSecs * 1000)
+  //   for(let i = 0; i < algorithmRepetition; i ++){
+  //     console.log("running algo")
+  //       if( (i%100==0) && (new Date).getTime() > algoMaxEndTime){ //Run time check every 100th run.
+  //           console.log("Ending because of time limit")
+  //           console.log("Ran times : " , i)
+  //           break;
+  //       }
+  //       const randomizedInput = generateRandom1D(problem.numMachines, problem.numJobs)
+  //       const problemCopy = Object.assign({}, problem)
+  //       problemCopy.jobs = JSON.parse(JSON.stringify(problem.jobs))
+
+  //       const ganttFromRandInput = randomizedInput.JSSP1dToGantt(problemCopy)
+  //       const newMakeSpan = ganttFromRandInput.getMakeSpan();
+        
+  //       // console.log(ganttFromRandInput.schedule[0])
+  //       if(newMakeSpan < makeSpan){
+  //           makeSpan = newMakeSpan
+  //           // gantt = ganttFromRandInput
+  //           console.log("Found Better", ganttFromRandInput)
+  //           console.log("New Make Span at index ", i, newMakeSpan)
+  //           this.setState({
+  //             schedule:ganttFromRandInput.schedule,
+  //             makeSpan:makeSpan
+  //           })
+  //       }
+  //   }
+    
+  //   // console.log("Shortest MakeSpan", makeSpan)
+  //   setTimeout( () => {this.runOptimizationAlgo(problem, 1, 1)},1000)
+  //   //return gantt
+  // }
   render(){
     console.log("Render function re-running", this.state.schedule)
     return (
@@ -103,6 +132,12 @@ class App extends React.Component {
         <NavBar/>
         <SubNavBar/>
         <h3>Water Bottling Plant Schedule Optimization</h3>
+        <p>
+          <strong>Number of Simulations Performed:</strong> {this.state.iterations} 
+        </p>
+        <p>
+          <strong>Minimum MakeSpan detected:</strong> {this.state.makeSpan} 
+        </p>
         
         <GanttChart schedule={this.state.schedule}/>
         
