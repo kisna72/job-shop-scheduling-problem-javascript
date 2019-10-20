@@ -126,19 +126,21 @@ const workercode = () => {
         return jssp1d
         console.log(jobs)
     };
+    function sleep(miliseconds) { 
+        // Evil sleep function used for demoing simulation. 
+        var currentTime = new Date().getTime();
+     
+        while (currentTime + miliseconds >= new Date().getTime()) {
+        }
+     }
+     
     function _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, context) {
         let makeSpan = Infinity;
         const algoStartTime = (new Date).getTime();
         const algoMaxEndTime = algoStartTime + (algorithmMaxTimeSecs * 1000)
+        const makeSpanHistory = []
         for(let i = 0; i < algorithmRepetition; i ++){
-            if(i%100  === 0){
-                const returnData = {
-                    type:'iterationCount',
-                    value:i+1
-                }
-                this.postMessage(returnData);
-                
-            }
+
             if( (i%100==0) && (new Date).getTime() > algoMaxEndTime){ //Run time check every 100th run.
                 console.log("Ending because of time limit")
                 console.log("Ran times : " , i)
@@ -150,6 +152,18 @@ const workercode = () => {
 
             const ganttFromRandInput = randomizedInput.JSSP1dToGantt(problemCopy)
             const newMakeSpan = ganttFromRandInput.getMakeSpan();
+            makeSpanHistory.push(newMakeSpan)
+            if(i%1  === 0){
+                const returnData = {
+                    type:'iterationCount',
+                    iteration:i+1,
+                    newMakeSpan:makeSpanHistory
+                }
+                this.postMessage(returnData);
+                context.sleep(1*200) // Give UI thread enough time to renderthis.
+                makeSpanHistory.length = 0
+                
+            }
             
             // console.log(ganttFromRandInput.schedule[0])
             if(newMakeSpan < makeSpan){
@@ -161,9 +175,11 @@ const workercode = () => {
                 const returnData = {
                     'type':'newSchedule',
                     'schedule':ganttFromRandInput.schedule,
-                    'makeSpan':makeSpan
+                    'makeSpan':makeSpan,
+                    "minMakeSpanDetectedIteration": i
                 }
-                this.postMessage(returnData)
+                this.postMessage(returnData);
+                context.sleep(1*1000)
                 // this.setState({
                 //   schedule:ganttFromRandInput.schedule,
                 //   makeSpan:makeSpan

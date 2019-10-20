@@ -12,6 +12,8 @@ import {
   generateRandom1D
 } from './JSSP';
 import { NavBar , SubNavBar } from './components/navbar';
+import TwoDPlot from './TwoDPlot';
+
 
 // Parameters for algorithm. Problem is defined in a problem definition file.
 const PROBLEM_INSTANCE_FILE = "demo.txt"
@@ -56,8 +58,10 @@ class App extends React.Component {
     this.state = {
       schedule:[[],[]],
       makeSpan:Infinity,
+      minMakeSpanDetectedIteration:0,
       iterations:0,
-      workerInstance : new Worker(WebWorkerScript)
+      workerInstance : new Worker(WebWorkerScript),
+      makeSpanHistory:[]
     }
     //this.runOptimizationAlgo(problem, 10, 1)
     // setTimeout( () => {this.runOptimizationAlgo(problem, 1, 1)},1000)
@@ -72,20 +76,24 @@ class App extends React.Component {
         // {"type":"iterationCount","value":200}
         // {"type":"newSchedule","value":[[],...]}
         if(e.data && e.data.type === "iterationCount"){
-          console.log(`New Iteration Count ${e.data.value}`)
+          //console.log(`New Iteration Count ${e.data.value}`)
           this.setState({
-            iterations:e.data.value
+            iterations:e.data.iteration,
+            makeSpanHistory:[...this.state.makeSpanHistory,...e.data.newMakeSpan]
           })
         }
         else if(e.data && e.data.type === "newSchedule"){
           console.log(`New Schedule ${e.data.schedule}`)
-          this.setState({schedule : e.data.schedule, makeSpan:e.data.makeSpan});
+          this.setState({
+            schedule : e.data.schedule, makeSpan:e.data.makeSpan,
+            minMakeSpanDetectedIteration: e.data.minMakeSpanDetectedIteration
+          });
         } else {
           console.log("generic Message ", e.data);
         }
         
     }, false);
-    this.state.workerInstance.postMessage({algorithmRepetition:10000,problem:problem,algorithmMaxTimeSecs:10})
+    this.state.workerInstance.postMessage({algorithmRepetition:10000,problem:problem,algorithmMaxTimeSecs:30})
   }
 
   // runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs ){
@@ -127,18 +135,20 @@ class App extends React.Component {
   // }
   render(){
     console.log("Render function re-running", this.state.schedule)
+    const screenWidth = window.innerWidth * 0.9
     return (
       <div className="App">
         <NavBar/>
         <SubNavBar/>
-        <h3>Water Bottling Plant Schedule Optimization</h3>
+        <h3>Water Bottling Plant - MakeSpan Optimization</h3>
         <p>
-          <strong>Number of Simulations Performed:</strong> {this.state.iterations} 
+          <strong>Number of Simulations Performed:</strong> {this.state.iterations}  | 
+          <strong>Minimum MakeSpan detected:</strong> {this.state.makeSpan} | <strong>Min detected after iteration :</strong> {this.state.minMakeSpanDetectedIteration}
         </p>
-        <p>
-          <strong>Minimum MakeSpan detected:</strong> {this.state.makeSpan} 
-        </p>
-        
+        <h6>Plot of makespan over time when using random Algorithm</h6>
+        <TwoDPlot data={this.state.makeSpanHistory} width={screenWidth} />
+        <hr></hr>
+        <h6>Schedule with the least makespan</h6>
         <GanttChart schedule={this.state.schedule}/>
         
         <div className="explanation">
