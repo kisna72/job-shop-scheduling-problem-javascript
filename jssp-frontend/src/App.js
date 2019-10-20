@@ -77,6 +77,7 @@ class App extends React.Component {
         // {"type":"newSchedule","value":[[],...]}
         if(e.data && e.data.type === "iterationCount"){
           //console.log(`New Iteration Count ${e.data.value}`)
+          console.log("About to concate makeSpan history array")
           this.setState({
             iterations:e.data.iteration,
             makeSpanHistory:[...this.state.makeSpanHistory,...e.data.newMakeSpan]
@@ -93,7 +94,7 @@ class App extends React.Component {
         }
         
     }, false);
-    this.state.workerInstance.postMessage({algorithmRepetition:10000,problem:problem,algorithmMaxTimeSecs:30})
+    this.state.workerInstance.postMessage({algorithmRepetition:50,problem:problem,algorithmMaxTimeSecs:30})
   }
 
   // runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs ){

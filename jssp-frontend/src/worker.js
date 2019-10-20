@@ -1,13 +1,14 @@
+import GanttChart from "./GattChart";
 
 const workercode = () => {
     
-    function JSSPProblemInstance(n,m){
+    const JSSPProblemInstance = (n,m) => {
         this.numJobs = n;
         this.numMachines = m
         this.jobs = []; // list of lists.
     }
     
-    function JSSPGanttChartSolution(schedule){
+    const JSSPGanttChartSolution = function(schedule){
         /**
          * Gantt Chart looks like this:
          * [
@@ -30,7 +31,14 @@ const workercode = () => {
                 }
                 return arrForMachine[arrForMachine.length -1 ]
             });
-            return Math.max(...allEnds)
+            let max = -Infinity;
+            allEnds.forEach(item => {
+                if(item > max){
+                    max = item
+                }
+            })
+            return max
+            //return Math.max(...allEnds)
         }
     }
     
@@ -86,7 +94,10 @@ const workercode = () => {
                 lastJobTime[jobNumber] = firstAvailableTime+time
                 
                 const ganttSchedule = [jobNumber,firstAvailableTime+1,firstAvailableTime+time ]
-                ganttChart[machine] = [...ganttChart[machine], ...ganttSchedule]
+                const newList = []
+                //ganttChart[machine].forEach(item => newList.push(item))
+                ganttSchedule.forEach(item => ganttChart[machine].push(item))
+                //ganttChart[machine] = newList // [...ganttChart[machine], ...ganttSchedule]
                 
             })
         
@@ -119,10 +130,17 @@ const workercode = () => {
         // We want each jobs repetead numMachines of times. 
         let jobs = []
         for(let i = 0;i < numJobs; i++){
-            const values = new Array(numMachines).fill(i) // Fill with Job Number 
-            jobs = [...jobs, ...values]
+            for(let j = 0; j < numMachines; j++){
+                jobs.push(i)
+            }
+            //const values = new Array(numMachines).fill(i) // Fill with Job Number 
+            //jobs.concat(values)
+            //jobs = [...jobs, ...values]
         }
+        console.log("done creating jobs")
+        console.log(jobs)
         const jssp1d = new JSSP1DEncoding(FishesYatesShuffle(jobs))
+        console.log(jssp1d)
         return jssp1d
         console.log(jobs)
     };
@@ -134,7 +152,10 @@ const workercode = () => {
         }
      }
      
-    function _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, context) {
+    function _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs) {
+        console.log("inside run optimization , this is ");
+        console.log(this);
+        console.log(generateRandom1D && "generate Random 1d is available")
         let makeSpan = Infinity;
         const algoStartTime = (new Date).getTime();
         const algoMaxEndTime = algoStartTime + (algorithmMaxTimeSecs * 1000)
@@ -146,12 +167,13 @@ const workercode = () => {
                 console.log("Ran times : " , i)
                 break;
             }
-            const randomizedInput = context.generateRandom1D(problem.numMachines, problem.numJobs)
+            const randomizedInput = generateRandom1D(problem.numMachines, problem.numJobs)
             const problemCopy = Object.assign({}, problem)
             problemCopy.jobs = JSON.parse(JSON.stringify(problem.jobs))
 
             const ganttFromRandInput = randomizedInput.JSSP1dToGantt(problemCopy)
             const newMakeSpan = ganttFromRandInput.getMakeSpan();
+            console.log("adding to newmakespan from worer")
             makeSpanHistory.push(newMakeSpan)
             if(i%1  === 0){
                 const returnData = {
@@ -160,9 +182,8 @@ const workercode = () => {
                     newMakeSpan:makeSpanHistory
                 }
                 this.postMessage(returnData);
-                context.sleep(1*200) // Give UI thread enough time to renderthis.
+                sleep(1*200) // Give UI thread enough time to renderthis.
                 makeSpanHistory.length = 0
-                
             }
             
             // console.log(ganttFromRandInput.schedule[0])
@@ -179,7 +200,7 @@ const workercode = () => {
                     "minMakeSpanDetectedIteration": i
                 }
                 this.postMessage(returnData);
-                context.sleep(1*1000)
+                sleep(1*1000)
                 // this.setState({
                 //   schedule:ganttFromRandInput.schedule,
                 //   makeSpan:makeSpan
@@ -189,15 +210,20 @@ const workercode = () => {
     }
 
     onmessage = function(e) {
+        const that = this;
+        console.log("this inside onmessage")
+        console.log(this)
         console.log('Message received from main script');
         console.log("message", e);
         const { problem, algorithmRepetition, algorithmMaxTimeSecs} = e.data; 
         console.log(problem, algorithmMaxTimeSecs);
-        _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, this)
+        _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, that)
         var workerResult = 'Received from main: ' + (e.data);
         console.log('Posting message back to main script');
         this.postMessage(workerResult);
     }
+
+    
 };
 
 let code = workercode.toString();
