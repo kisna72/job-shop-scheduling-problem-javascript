@@ -145,7 +145,7 @@ class App extends React.Component {
           <strong>Number of Simulations Performed:</strong> {this.state.iterations}  | 
           <strong>Minimum MakeSpan detected:</strong> {this.state.makeSpan} | <strong>Min detected after iteration :</strong> {this.state.minMakeSpanDetectedIteration}
         </p>
-        <h6>Plot of makespan over time when using random Algorithm</h6>
+        <h6>Plot of makespan for each different simulation when using random Algorithm</h6>
         <TwoDPlot data={this.state.makeSpanHistory} width={screenWidth} />
         <hr></hr>
         <h6>Schedule with the least makespan</h6>
