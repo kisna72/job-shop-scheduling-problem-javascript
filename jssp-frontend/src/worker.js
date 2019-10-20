@@ -161,6 +161,10 @@ const workercode = () => {
         const algoMaxEndTime = algoStartTime + (algorithmMaxTimeSecs * 1000)
         const makeSpanHistory = []
         for(let i = 0; i < algorithmRepetition; i ++){
+            if( (i%5===0) && (new Date).getTime() > algoMaxEndTime) {
+                console.log("Ran for too long already")
+                break;
+            }
 
             if( (i%100==0) && (new Date).getTime() > algoMaxEndTime){ //Run time check every 100th run.
                 console.log("Ending because of time limit")

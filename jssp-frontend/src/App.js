@@ -61,86 +61,83 @@ class App extends React.Component {
       minMakeSpanDetectedIteration:0,
       iterations:0,
       workerInstance : new Worker(WebWorkerScript),
-      makeSpanHistory:[]
+      makeSpanHistory:[],
+      maxAlgorithmRepetition:50,
+      algorithmMaxTimeSecs:30
     }
     //this.runOptimizationAlgo(problem, 10, 1)
     // setTimeout( () => {this.runOptimizationAlgo(problem, 1, 1)},1000)
   }
-  componentDidMount(){
-
+  startJobShopWorker = () => {
     //var myWorker = new Worker('worker.js');
-    this.state.workerInstance.addEventListener("message", e => {
-        console.log("Received response:");
-        console.log(e.data);
-        // We can have 2 different data types.
-        // {"type":"iterationCount","value":200}
-        // {"type":"newSchedule","value":[[],...]}
-        if(e.data && e.data.type === "iterationCount"){
-          //console.log(`New Iteration Count ${e.data.value}`)
-          console.log("About to concate makeSpan history array")
-          this.setState({
-            iterations:e.data.iteration,
-            makeSpanHistory:[...this.state.makeSpanHistory,...e.data.newMakeSpan]
-          })
-        }
-        else if(e.data && e.data.type === "newSchedule"){
-          console.log(`New Schedule ${e.data.schedule}`)
-          this.setState({
-            schedule : e.data.schedule, makeSpan:e.data.makeSpan,
-            minMakeSpanDetectedIteration: e.data.minMakeSpanDetectedIteration
-          });
-        } else {
-          console.log("generic Message ", e.data);
-        }
-        
+    const workerInstance = new Worker(WebWorkerScript);
+    
+    workerInstance.addEventListener("message", e => {
+      console.log("Received response:");
+      console.log(e.data);
+      // We can have 2 different data types.
+      // {"type":"iterationCount","value":200}
+      // {"type":"newSchedule","value":[[],...]}
+      if(e.data && e.data.type === "iterationCount"){
+        //console.log(`New Iteration Count ${e.data.value}`)
+        console.log("About to concate makeSpan history array")
+        this.setState({
+          iterations:e.data.iteration,
+          makeSpanHistory:[...this.state.makeSpanHistory,...e.data.newMakeSpan]
+        })
+      }
+      else if(e.data && e.data.type === "newSchedule"){
+        console.log(`New Schedule ${e.data.schedule}`)
+        this.setState({
+          schedule : e.data.schedule, makeSpan:e.data.makeSpan,
+          minMakeSpanDetectedIteration: e.data.minMakeSpanDetectedIteration
+        });
+      } else {
+        console.log("generic Message ", e.data);
+      } 
     }, false);
-    this.state.workerInstance.postMessage({algorithmRepetition:50,problem:problem,algorithmMaxTimeSecs:30})
+    
+    workerInstance.postMessage({
+      algorithmRepetition:this.state.maxAlgorithmRepetition,
+      problem:problem,
+      algorithmMaxTimeSecs:this.state.algorithmMaxTimeSecs
+    })
+
+    this.setState({
+      workerInstance: workerInstance,
+    })
   }
 
-  // runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs ){
-  //   // let gantt = []
-  //   let { makeSpan } = this.state
-  //   // const times = 100
-  //   const algoStartTime = (new Date).getTime();
-  //   const algoMaxEndTime = algoStartTime + (algorithmMaxTimeSecs * 1000)
-  //   for(let i = 0; i < algorithmRepetition; i ++){
-  //     console.log("running algo")
-  //       if( (i%100==0) && (new Date).getTime() > algoMaxEndTime){ //Run time check every 100th run.
-  //           console.log("Ending because of time limit")
-  //           console.log("Ran times : " , i)
-  //           break;
-  //       }
-  //       const randomizedInput = generateRandom1D(problem.numMachines, problem.numJobs)
-  //       const problemCopy = Object.assign({}, problem)
-  //       problemCopy.jobs = JSON.parse(JSON.stringify(problem.jobs))
+  componentDidMount(){
+    this.startJobShopWorker()
+  }
+  handleChange = (event)=>{
+    this.setState({[event.target.name]: event.target.value});
+  }
 
-  //       const ganttFromRandInput = randomizedInput.JSSP1dToGantt(problemCopy)
-  //       const newMakeSpan = ganttFromRandInput.getMakeSpan();
-        
-  //       // console.log(ganttFromRandInput.schedule[0])
-  //       if(newMakeSpan < makeSpan){
-  //           makeSpan = newMakeSpan
-  //           // gantt = ganttFromRandInput
-  //           console.log("Found Better", ganttFromRandInput)
-  //           console.log("New Make Span at index ", i, newMakeSpan)
-  //           this.setState({
-  //             schedule:ganttFromRandInput.schedule,
-  //             makeSpan:makeSpan
-  //           })
-  //       }
-  //   }
+  handleRestartJobShopWorkerButton = (e)=>{
+    e.preventDefault();
+    console.log("restarting this puppy.")
+    console.log(e)
+    this.state.workerInstance.terminate();
+    this.setState({
+      schedule:[[],[]],
+      makeSpan:Infinity,
+      minMakeSpanDetectedIteration:0,
+      iterations:0,
+      makeSpanHistory:[],
+    },this.startJobShopWorker() )
     
-  //   // console.log("Shortest MakeSpan", makeSpan)
-  //   setTimeout( () => {this.runOptimizationAlgo(problem, 1, 1)},1000)
-  //   //return gantt
-  // }
+  }
+  handleStopWorker = (e) => {
+    this.state.workerInstance.terminate();
+  }
   render(){
     console.log("Render function re-running", this.state.schedule)
     const screenWidth = window.innerWidth * 0.9
     return (
       <div className="App">
         <NavBar/>
-        <SubNavBar/>
         <h3>Water Bottling Plant - MakeSpan Optimization</h3>
         <p>
           <strong>Number of Simulations Performed:</strong> {this.state.iterations}  | 
@@ -152,10 +149,33 @@ class App extends React.Component {
         <h6>Schedule with the least makespan</h6>
         <GanttChart schedule={this.state.schedule}/>
         
+
         <div className="explanation">
+
         <p>
 The Chart above shows the order in which each operation in a water bottling plant must run on each machine to complete all bottling activities in the most efficient manner. 
-Watch the chart change as the algorithm finds more and more efficient way to run the factory over time. Simulation is slowed down for demonstration purpose.</p>
+Watch the chart change as the algorithm finds more and more efficient way to run the factory over time. Simulation is slowed down for demonstration purpose.
+Run the simulations with different settings below: 
+</p>
+        <form onSubmit={this.handleRestartJobShopWorkerButton}>
+          <div class="form-row p-2 m-2">
+            <div class="col">
+              <label for="inputEmail4"> Max number of iterations</label>
+              <input type="number" name="maxAlgorithmRepetition" onChange={this.handleChange} value={this.state.maxAlgorithmRepetition} class="form-control" placeholder="Max Seconds to run simulation"/>
+            </div>
+            <div class="col">
+              <label for="inputEmail4">Max Seconds to run simulation</label>
+              <input type="number" name="algorithmMaxTimeSecs" onChange={this.handleChange} value={this.state.algorithmMaxTimeSecs} class="form-control" placeholder="Max number of iterations"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <input type="submit" value="Restart Simulation"></input>
+              <button className="ml-2" onClick={this.handleStopWorker}>Stop Simulation</button>
+            </div>
+            
+          </div>
+        </form>
           <hr></hr>
           <h3>Explanation</h3>
 

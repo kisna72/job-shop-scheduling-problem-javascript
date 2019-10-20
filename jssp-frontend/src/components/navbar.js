@@ -12,9 +12,7 @@ function NavBar(props){
                     <li class="nav-item active">
                         <a class="nav-link" href="/">Water Bottle Plant Example <span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="nav-item">
-                        <a disabled="true" class="nav-link" href="/">Plastics Plant Example (coming soon)</a>
-                    </li>
+                    
                 </ul>
             </div>
         </nav>
