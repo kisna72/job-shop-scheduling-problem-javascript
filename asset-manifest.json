@@ -1,24 +1,24 @@
 {
   "files": {
-    "main.css": "/job-shop-scheduling-problem-javascript/static/css/main.2914b034.chunk.css",
-    "main.js": "/job-shop-scheduling-problem-javascript/static/js/main.cbcdc6cc.chunk.js",
-    "main.js.map": "/job-shop-scheduling-problem-javascript/static/js/main.cbcdc6cc.chunk.js.map",
-    "runtime-main.js": "/job-shop-scheduling-problem-javascript/static/js/runtime-main.0c818627.js",
-    "runtime-main.js.map": "/job-shop-scheduling-problem-javascript/static/js/runtime-main.0c818627.js.map",
-    "static/css/2.c140e360.chunk.css": "/job-shop-scheduling-problem-javascript/static/css/2.c140e360.chunk.css",
-    "static/js/2.af01873b.chunk.js": "/job-shop-scheduling-problem-javascript/static/js/2.af01873b.chunk.js",
-    "static/js/2.af01873b.chunk.js.map": "/job-shop-scheduling-problem-javascript/static/js/2.af01873b.chunk.js.map",
-    "index.html": "/job-shop-scheduling-problem-javascript/index.html",
-    "precache-manifest.f53b340bbf29e7fcc6ab5ab8935ebb67.js": "/job-shop-scheduling-problem-javascript/precache-manifest.f53b340bbf29e7fcc6ab5ab8935ebb67.js",
-    "service-worker.js": "/job-shop-scheduling-problem-javascript/service-worker.js",
-    "static/css/2.c140e360.chunk.css.map": "/job-shop-scheduling-problem-javascript/static/css/2.c140e360.chunk.css.map",
-    "static/css/main.2914b034.chunk.css.map": "/job-shop-scheduling-problem-javascript/static/css/main.2914b034.chunk.css.map"
+    "main.css": "/static/css/main.2914b034.chunk.css",
+    "main.js": "/static/js/main.cdc40d10.chunk.js",
+    "main.js.map": "/static/js/main.cdc40d10.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.35f55b86.js",
+    "runtime-main.js.map": "/static/js/runtime-main.35f55b86.js.map",
+    "static/css/2.c140e360.chunk.css": "/static/css/2.c140e360.chunk.css",
+    "static/js/2.aa2fb999.chunk.js": "/static/js/2.aa2fb999.chunk.js",
+    "static/js/2.aa2fb999.chunk.js.map": "/static/js/2.aa2fb999.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.67784c7709c5f176cd66c1d3faf0789a.js": "/precache-manifest.67784c7709c5f176cd66c1d3faf0789a.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.c140e360.chunk.css.map": "/static/css/2.c140e360.chunk.css.map",
+    "static/css/main.2914b034.chunk.css.map": "/static/css/main.2914b034.chunk.css.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.0c818627.js",
+    "static/js/runtime-main.35f55b86.js",
     "static/css/2.c140e360.chunk.css",
-    "static/js/2.af01873b.chunk.js",
+    "static/js/2.aa2fb999.chunk.js",
     "static/css/main.2914b034.chunk.css",
-    "static/js/main.cbcdc6cc.chunk.js"
+    "static/js/main.cdc40d10.chunk.js"
   ]
 }
