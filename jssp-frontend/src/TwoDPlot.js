@@ -26,7 +26,7 @@ class TwoDPlot extends Component {
     //   {x: 9, y: 0}
     // ];
     return (
-      <div className="App">
+      <div className="twodplot">
         <div>
           <XYPlot height={this.props.height || 300} width={this.props.width || 300}>
             <LineSeries data={data} />

@@ -134,7 +134,7 @@ class App extends React.Component {
   }
   render(){
     console.log("Render function re-running", this.state.schedule)
-    const screenWidth = window.innerWidth * 0.9
+    const screenWidth = window.innerWidth - 60
     return (
       <div className="App">
         <NavBar/>
