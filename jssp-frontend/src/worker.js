@@ -144,7 +144,7 @@ const workercode = () => {
                 base[randj] = randiVal
             }
             swap()
-            return new JSSP1DEncoding([...base]) // spread to avoid side effects.
+            return new JSSP1DEncoding(base) // spread to avoid side effects.
         }
         // We want each jobs repetead numMachines of times. 
         let jobs = []
