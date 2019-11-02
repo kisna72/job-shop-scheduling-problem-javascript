@@ -23,8 +23,9 @@ class GanttChart extends React.Component {
         const allEnds = this.props.schedule.map(schArr => schArr[schArr.length-1])
         console.log(allEnds)
         const maxTime = Math.max(...allEnds)
+        const maxTimePlus = ((maxTime/10)+1 )*10
         return (
-            <>
+        
             <div className="ganttChartWithY">
                 <div className="ganttChartYAxis">
                     {this.props.schedule.map( (sch,idx)=>{
@@ -39,7 +40,7 @@ class GanttChart extends React.Component {
                     <GanttXTicks index={this.props.schedule.length} maxTime={maxTime} />
                 </div>
             </div>
-            </>
+            
         )
     }
 }

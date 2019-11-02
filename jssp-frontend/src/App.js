@@ -186,8 +186,8 @@ class App extends React.Component {
             <option value="random">random search</option>
             <option value="hillClimbing">neighbourhood search</option>
           </select>
-          Algorithm. Restarts with updated settings when 
-          <button className="" onClick={this.handleRestartJobShopWorkerButton}>  Restart </button> is clicked.
+          Algorithm. 
+          <button className="" onClick={this.handleRestartJobShopWorkerButton}>  Restart with new settings </button>
         </h6>
 
         <div style={{marginTop:'10px'}}>
