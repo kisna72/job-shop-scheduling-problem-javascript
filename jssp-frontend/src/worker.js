@@ -126,7 +126,26 @@ const workercode = () => {
         return array;
     }
     
-    function generateRandom1D(numMachines, numJobs) {
+    function generateRandom1D(numMachines, numJobs, base, nswap) {
+        if (base){
+            // if base is passed in - just do a swap once. nswap not used at the moment.
+            console.log("base is passed in")
+            console.log("base" , base)
+            let randi;
+            let randj;
+            function swap(){
+                const randi = Math.floor(Math.random() * base.length )
+                const randj = Math.floor(Math.random() * base.length )
+                if(base[randi] == base[randj]){
+                    swap()
+                }
+                const randiVal = base[randi]
+                base[randi] = base[randj]
+                base[randj] = randiVal
+            }
+            swap()
+            return new JSSP1DEncoding([...base]) // spread to avoid side effects.
+        }
         // We want each jobs repetead numMachines of times. 
         let jobs = []
         for(let i = 0;i < numJobs; i++){
@@ -145,14 +164,18 @@ const workercode = () => {
         console.log(jobs)
     };
     function sleep(miliseconds) { 
-        // Evil sleep function used for demoing simulation. 
+        /**
+         * Evil sleep function used for demoing simulation.
+         * Since the example problem I am using solves really fast, I am adding sleep in the thread.
+         * TODO >> Actually use setTimeOut to accomplish the same thing so thread isn't running while waiting.
+         */
         var currentTime = new Date().getTime();
      
         while (currentTime + miliseconds >= new Date().getTime()) {
         }
      }
      
-    function _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs) {
+    function _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType) {
         console.log("inside run optimization , this is ");
         console.log(this);
         console.log(generateRandom1D && "generate Random 1d is available")
@@ -160,6 +183,7 @@ const workercode = () => {
         const algoStartTime = (new Date).getTime();
         const algoMaxEndTime = algoStartTime + (algorithmMaxTimeSecs * 1000)
         const makeSpanHistory = []
+        let bestSolution1DEncoded;  // Store the best solution encoded in 1d so far.
         for(let i = 0; i < algorithmRepetition; i ++){
             if( (i%5===0) && (new Date).getTime() > algoMaxEndTime) {
                 console.log("Ran for too long already")
@@ -171,7 +195,7 @@ const workercode = () => {
                 console.log("Ran times : " , i)
                 break;
             }
-            const randomizedInput = generateRandom1D(problem.numMachines, problem.numJobs)
+            const randomizedInput = generateRandom1D(problem.numMachines, problem.numJobs, algorithmType === "hillClimbing" ? bestSolution1DEncoded && bestSolution1DEncoded.jssp1d : null)
             const problemCopy = Object.assign({}, problem)
             problemCopy.jobs = JSON.parse(JSON.stringify(problem.jobs))
 
@@ -194,6 +218,7 @@ const workercode = () => {
             if(newMakeSpan < makeSpan){
                 makeSpan = newMakeSpan
                 // gantt = ganttFromRandInput
+                bestSolution1DEncoded = randomizedInput
                 console.log("Found Better", ganttFromRandInput)
                 console.log("New Make Span at index ", i, newMakeSpan)
                 this.postMessage("Got New MakeSpan")
@@ -219,9 +244,9 @@ const workercode = () => {
         console.log(this)
         console.log('Message received from main script');
         console.log("message", e);
-        const { problem, algorithmRepetition, algorithmMaxTimeSecs} = e.data; 
+        const { problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType} = e.data; 
         console.log(problem, algorithmMaxTimeSecs);
-        _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, that)
+        _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType, that)
         var workerResult = 'Received from main: ' + (e.data);
         console.log('Posting message back to main script');
         this.postMessage(workerResult);
