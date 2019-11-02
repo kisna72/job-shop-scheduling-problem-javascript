@@ -20,14 +20,38 @@ const PROBLEM_INSTANCE_FILE = "demo.txt"
 const ALGORITHM_REPETITION = 10000
 const ALGORITHM_MAX_TIME_SECONDS = 1  //Max time we want the algo to run. TODO use timelimit
 
+// A more complicated Example:
+
+
 
 // Step 1: Create a new instance of JSSPProblemInstance from file.
 const problem = new JSSPProblemInstance(4,5) // Instantiate with no data. 
+
+// // Example Problem Statement
 // problem.jobs = [ 
 //   [ 0, 10, 1, 20, 2, 20, 3, 40, 4, 10 ],
 //   [ 1, 20, 0, 10, 3, 30, 2, 50, 4, 30 ],
 //   [ 2, 30, 1, 20, 4, 12, 3, 40, 0, 10 ],
 //   [ 4, 50, 3, 30, 2, 15, 0, 20, 1, 15 ] ]
+
+// Complicated Problem Statement
+// problem.numJobs = 10
+// problem.numMachines = 10
+// problem.jobs = [
+// [ 4, 88, 8, 68, 6, 94, 5, 99, 1, 67, 2, 89, 9, 77, 7, 99, 0, 86, 3, 92 ],
+// [ 5, 72, 3, 50, 6, 69, 4, 75, 2, 94, 8, 66, 0, 92, 1, 82, 7, 94, 9, 63 ],
+// [ 9, 83, 8, 61, 0, 83, 1, 65, 6, 64, 5, 85, 7, 78, 4, 85, 2, 55, 3, 77 ],
+// [ 7, 94, 2, 68, 1, 61, 4, 99, 3, 54, 6, 75, 5, 66, 0, 76, 9, 63, 8, 67 ],
+// [ 3, 69, 4, 88, 9, 82, 8, 95, 0, 99, 2, 67, 6, 95, 5, 68, 7, 67, 1, 86 ],
+// [ 1, 99, 4, 81, 5, 64, 6, 66, 8, 80, 2, 80, 7, 69, 9, 62, 3, 79, 0, 88 ],
+// [ 7, 50, 1, 86, 4, 97, 3, 96, 0, 95, 8, 97, 2, 66, 5, 99, 6, 52, 9, 71 ],
+// [ 4, 98, 6, 73, 3, 82, 2, 51, 1, 71, 5, 94, 7, 85, 0, 62, 8, 95, 9, 79 ],
+// [ 0, 94, 6, 71, 3, 81, 7, 85, 1, 66, 2, 90, 4, 76, 5, 58, 8, 93, 9, 97 ],
+// [ 3, 50, 0, 59, 1, 82, 8, 67, 7, 56, 9, 96, 6, 58, 4, 81, 5, 59, 2, 96 ]
+// ]
+
+
+
 
 /**
  * Water Bottoling Plant that does 4 different types of water bottles. 
@@ -63,7 +87,8 @@ class App extends React.Component {
       workerInstance : new Worker(WebWorkerScript),
       makeSpanHistory:[],
       maxAlgorithmRepetition:50,
-      algorithmMaxTimeSecs:30
+      algorithmMaxTimeSecs:30,
+      algorithmType: 'hillClimbing' // random || hillClimbing
     }
     //this.runOptimizationAlgo(problem, 10, 1)
     // setTimeout( () => {this.runOptimizationAlgo(problem, 1, 1)},1000)
@@ -100,7 +125,8 @@ class App extends React.Component {
     workerInstance.postMessage({
       algorithmRepetition:this.state.maxAlgorithmRepetition,
       problem:problem,
-      algorithmMaxTimeSecs:this.state.algorithmMaxTimeSecs
+      algorithmMaxTimeSecs:this.state.algorithmMaxTimeSecs,
+      algorithmType: this.state.algorithmType
     })
 
     this.setState({
@@ -109,6 +135,7 @@ class App extends React.Component {
   }
 
   componentDidMount(){
+    //console.log("component did mount activated")
     this.startJobShopWorker()
   }
   handleChange = (event)=>{
@@ -130,11 +157,13 @@ class App extends React.Component {
     
   }
   handleStopWorker = (e) => {
+    console.log("terminate worker")
     this.state.workerInstance.terminate();
+    console.log("terminate complete")
   }
   render(){
     console.log("Render function re-running", this.state.schedule)
-    const screenWidth = window.innerWidth - 60
+    const screenWidth = (window.innerWidth - 60)
     return (
       <div className="App">
         <NavBar/>
@@ -143,8 +172,28 @@ class App extends React.Component {
           <strong>Number of Simulations Performed:</strong> {this.state.iterations}  | 
           <strong>Minimum MakeSpan detected:</strong> {this.state.makeSpan} | <strong>Min detected after iteration :</strong> {this.state.minMakeSpanDetectedIteration}
         </p>
-        <h6>Plot of makespan for each different simulation when using random Algorithm</h6>
-        <TwoDPlot data={this.state.makeSpanHistory} width={screenWidth} />
+        <h6>Terminates after running 
+          <input type="number" style={{width:'4em'}} name="maxAlgorithmRepetition" onChange={this.handleChange} value={this.state.maxAlgorithmRepetition}/>
+          simulations or after 
+          
+          <input type="number" style={{width:'4em'}} name="algorithmMaxTimeSecs" onChange={this.handleChange} value={this.state.algorithmMaxTimeSecs} class="form-controll" placeholder="Max number of iterations"/>
+          seconds has passed or when 
+          <button className="ml-2" onClick={this.handleStopWorker}> Stop </button>
+          is clicked.
+
+          Uses 
+          <select className="form-controll" name="algorithmType" onChange={this.handleChange} value={this.state.algorithmType}>
+            <option value="random">random search</option>
+            <option value="hillClimbing">neighbourhood search</option>
+          </select>
+          Algorithm. Restarts with updated settings when 
+          <button className="" onClick={this.handleRestartJobShopWorkerButton}>  Restart </button> is clicked.
+        </h6>
+
+        <div style={{marginTop:'10px'}}>
+          <h6>Plot of makespan during each different simulation</h6>
+          <TwoDPlot data={this.state.makeSpanHistory} width={screenWidth} />
+        </div>
         <hr></hr>
         <h6>Schedule with the least makespan</h6>
         <GanttChart schedule={this.state.schedule}/>
@@ -157,25 +206,7 @@ The Chart above shows the order in which each operation in a water bottling plan
 Watch the chart change as the algorithm finds more and more efficient way to run the factory over time. Simulation is slowed down for demonstration purpose.
 Run the simulations with different settings below: 
 </p>
-        <form onSubmit={this.handleRestartJobShopWorkerButton}>
-          <div class="form-row p-2 m-2">
-            <div class="col">
-              <label for="inputEmail4"> Max number of iterations</label>
-              <input type="number" name="maxAlgorithmRepetition" onChange={this.handleChange} value={this.state.maxAlgorithmRepetition} class="form-control" placeholder="Max Seconds to run simulation"/>
-            </div>
-            <div class="col">
-              <label for="inputEmail4">Max Seconds to run simulation</label>
-              <input type="number" name="algorithmMaxTimeSecs" onChange={this.handleChange} value={this.state.algorithmMaxTimeSecs} class="form-control" placeholder="Max number of iterations"/>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="col">
-              <input type="submit" value="Restart Simulation"></input>
-              <button className="ml-2" onClick={this.handleStopWorker}>Stop Simulation</button>
-            </div>
-            
-          </div>
-        </form>
+        
           <hr></hr>
           <h3>Explanation</h3>
 
