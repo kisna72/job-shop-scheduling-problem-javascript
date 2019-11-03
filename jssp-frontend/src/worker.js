@@ -129,15 +129,11 @@ const workercode = () => {
     function generateRandom1D(numMachines, numJobs, base, nswap) {
         if (base){
             // if base is passed in - just do a swap once. nswap not used at the moment.
-            console.log("base is passed in")
-            console.log("base" , base)
-            let randi;
-            let randj;
             function swap(){
                 const randi = Math.floor(Math.random() * base.length )
-                const randj = Math.floor(Math.random() * base.length )
-                if(base[randi] == base[randj]){
-                    swap()
+                let randj = Math.floor(Math.random() * base.length )
+                while(base[randi] === base[randj]){ // no point in swapping the same number.
+                    randj = Math.floor(Math.random() * base.length )
                 }
                 const randiVal = base[randi]
                 base[randi] = base[randj]
@@ -251,8 +247,6 @@ const workercode = () => {
         console.log('Posting message back to main script');
         this.postMessage(workerResult);
     }
-
-    
 };
 
 let code = workercode.toString();
@@ -262,42 +256,3 @@ const blob = new Blob([code], {type: "application/javascript"});
 const worker_script = URL.createObjectURL(blob);
 
 export default worker_script;
-//module.exports = worker_script;
-
-
-// const runOptimizationAlgo = (problem, algorithmRepetition, algorithmMaxTimeSecs, workerInstance ) => {
-//     // let gantt = []
-//     let { makeSpan } = this.state
-//     // const times = 100
-//     const algoStartTime = (new Date).getTime();
-//     const algoMaxEndTime = algoStartTime + (algorithmMaxTimeSecs * 1000)
-//     for(let i = 0; i < algorithmRepetition; i ++){
-//       console.log("running algo")
-//       workerInstance.postMessage(`Iteration : ${i}`)
-//         if( (i%100==0) && (new Date).getTime() > algoMaxEndTime){ //Run time check every 100th run.
-//             console.log("Ending because of time limit")
-//             console.log("Ran times : " , i)
-//             break;
-//         }
-//         const randomizedInput = generateRandom1D(problem.numMachines, problem.numJobs)
-//         const problemCopy = Object.assign({}, problem)
-//         problemCopy.jobs = JSON.parse(JSON.stringify(problem.jobs))
-
-//         const ganttFromRandInput = randomizedInput.JSSP1dToGantt(problemCopy)
-//         const newMakeSpan = ganttFromRandInput.getMakeSpan();
-        
-//         // console.log(ganttFromRandInput.schedule[0])
-//         if(newMakeSpan < makeSpan){
-//             makeSpan = newMakeSpan
-//             // gantt = ganttFromRandInput
-//             //console.log("Found Better", ganttFromRandInput)
-//             console.log("New Make Span at index ", i, newMakeSpan)
-//             workerInstance.postMessage("Got New MakeSpan")
-//             workerInstance.postMessage(makeSpan)
-//             // this.setState({
-//             //   schedule:ganttFromRandInput.schedule,
-//             //   makeSpan:makeSpan
-//             // })
-//         }
-//     }
-// }

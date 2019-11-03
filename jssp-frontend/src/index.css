@@ -17,21 +17,3 @@ table, th, td {
 .job-1:hover > .job-1 {
   border:1px solid red;
 }
-
-.ganttChartWithY {
-  display: flex;
-  flex-direction: row;
-  padding-left: 40px;
-  padding-right: 40px;
-  /* border: 1px solid black; */
-}
-.ganttChartYAxis {
-  display: flex;
-  flex-direction: column;
-}
-.yAxisTick {
-  height: 25px;
-}
-.ganttChartData {
-  flex-grow: 1
-}

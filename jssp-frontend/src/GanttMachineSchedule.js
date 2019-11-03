@@ -7,30 +7,11 @@ import jobIdToColour from './jobIdToColor';
 class GanttMachineSchedule extends React.Component {
     constructor(props){
         super(props)
-        // this.state = {
-        //     schedule : this.props.schedule,// [ 0, 1, 10, 1, 21, 30, 2, 131, 140, 3, 146, 165 ],
-        //     maxTime: this.props.maxTime,//165
-        //     index: this.props.index
-        // }
     }
     randColor(){
         return Math.floor(Math.random() * 180) //use 180 instead of 255 to avoid colors too light
     }
 
-    // Modified from https://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-javascript
-    // jobIdToColour(jobid) {
-    //     const str = `${jobid}color`
-    //     var hash = 0;
-    //     for (var i = 0; i < str.length; i++) {
-    //         hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    //     }
-    //     var colour = '#';
-    //     for (var i = 0; i < 3; i++) {
-    //         var value = (hash >> (i * 8)) & 0xFF;
-    //         colour += ('00' + value.toString(16)).substr(-2);
-    //     }
-    //     return colour;
-    // }
     render(){
         let a = [] 
         for(let i = 0; i< this.props.schedule.length; i++){

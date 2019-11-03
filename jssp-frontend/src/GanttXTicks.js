@@ -4,9 +4,7 @@ class GanttXTicks extends React.Component {
     render(){
         const parentStyle = {
             position:'relative',
-            // display:'flex',
             top:`${(this.props.index) * 25}px`,
-            // width: '100%'
         }
         const ticks = []
         const maxTimePlus = ((this.props.maxTime/10)+1 )*10

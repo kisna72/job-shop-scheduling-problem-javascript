@@ -4,55 +4,12 @@ import GanttChart from './GattChart';
 import jobIdToColour from './jobIdToColor';
 import WebWorkerScript from './worker';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {
-  JSSPProblemInstance,
-  JSSPGanttChartSolution,
-  JSSP1DEncoding,
-  FishesYatesShuffle,
-  generateRandom1D
-} from './JSSP';
-import { NavBar , SubNavBar } from './components/navbar';
+import { JSSPProblemInstance } from './JSSP';
+import { NavBar } from './components/navbar';
 import TwoDPlot from './TwoDPlot';
 
-
-// Parameters for algorithm. Problem is defined in a problem definition file.
-const PROBLEM_INSTANCE_FILE = "demo.txt"
-const ALGORITHM_REPETITION = 10000
-const ALGORITHM_MAX_TIME_SECONDS = 1  //Max time we want the algo to run. TODO use timelimit
-
-// A more complicated Example:
-
-
-
-// Step 1: Create a new instance of JSSPProblemInstance from file.
+// Create a new instance of JSSPProblemInstance and assign jobs for water bottle plant.
 const problem = new JSSPProblemInstance(4,5) // Instantiate with no data. 
-
-// // Example Problem Statement
-// problem.jobs = [ 
-//   [ 0, 10, 1, 20, 2, 20, 3, 40, 4, 10 ],
-//   [ 1, 20, 0, 10, 3, 30, 2, 50, 4, 30 ],
-//   [ 2, 30, 1, 20, 4, 12, 3, 40, 0, 10 ],
-//   [ 4, 50, 3, 30, 2, 15, 0, 20, 1, 15 ] ]
-
-// Complicated Problem Statement
-// problem.numJobs = 10
-// problem.numMachines = 10
-// problem.jobs = [
-// [ 4, 88, 8, 68, 6, 94, 5, 99, 1, 67, 2, 89, 9, 77, 7, 99, 0, 86, 3, 92 ],
-// [ 5, 72, 3, 50, 6, 69, 4, 75, 2, 94, 8, 66, 0, 92, 1, 82, 7, 94, 9, 63 ],
-// [ 9, 83, 8, 61, 0, 83, 1, 65, 6, 64, 5, 85, 7, 78, 4, 85, 2, 55, 3, 77 ],
-// [ 7, 94, 2, 68, 1, 61, 4, 99, 3, 54, 6, 75, 5, 66, 0, 76, 9, 63, 8, 67 ],
-// [ 3, 69, 4, 88, 9, 82, 8, 95, 0, 99, 2, 67, 6, 95, 5, 68, 7, 67, 1, 86 ],
-// [ 1, 99, 4, 81, 5, 64, 6, 66, 8, 80, 2, 80, 7, 69, 9, 62, 3, 79, 0, 88 ],
-// [ 7, 50, 1, 86, 4, 97, 3, 96, 0, 95, 8, 97, 2, 66, 5, 99, 6, 52, 9, 71 ],
-// [ 4, 98, 6, 73, 3, 82, 2, 51, 1, 71, 5, 94, 7, 85, 0, 62, 8, 95, 9, 79 ],
-// [ 0, 94, 6, 71, 3, 81, 7, 85, 1, 66, 2, 90, 4, 76, 5, 58, 8, 93, 9, 97 ],
-// [ 3, 50, 0, 59, 1, 82, 8, 67, 7, 56, 9, 96, 6, 58, 4, 81, 5, 59, 2, 96 ]
-// ]
-
-
-
-
 /**
  * Water Bottoling Plant that does 4 different types of water bottles. 
  * Job 0 - Spring Water 16oz
@@ -76,6 +33,29 @@ problem.jobs = [
   [0, 15, 1, 30, 2, 20, 3, 10, 4, 10],
 ]
 
+// Example Problem Statement
+// problem.jobs = [ 
+//   [ 0, 10, 1, 20, 2, 20, 3, 40, 4, 10 ],
+//   [ 1, 20, 0, 10, 3, 30, 2, 50, 4, 30 ],
+//   [ 2, 30, 1, 20, 4, 12, 3, 40, 0, 10 ],
+//   [ 4, 50, 3, 30, 2, 15, 0, 20, 1, 15 ] ]
+
+// Complicated Problem Statement -> Uncomment below..
+// problem.numJobs = 10
+// problem.numMachines = 10
+// problem.jobs = [
+// [ 4, 88, 8, 68, 6, 94, 5, 99, 1, 67, 2, 89, 9, 77, 7, 99, 0, 86, 3, 92 ],
+// [ 5, 72, 3, 50, 6, 69, 4, 75, 2, 94, 8, 66, 0, 92, 1, 82, 7, 94, 9, 63 ],
+// [ 9, 83, 8, 61, 0, 83, 1, 65, 6, 64, 5, 85, 7, 78, 4, 85, 2, 55, 3, 77 ],
+// [ 7, 94, 2, 68, 1, 61, 4, 99, 3, 54, 6, 75, 5, 66, 0, 76, 9, 63, 8, 67 ],
+// [ 3, 69, 4, 88, 9, 82, 8, 95, 0, 99, 2, 67, 6, 95, 5, 68, 7, 67, 1, 86 ],
+// [ 1, 99, 4, 81, 5, 64, 6, 66, 8, 80, 2, 80, 7, 69, 9, 62, 3, 79, 0, 88 ],
+// [ 7, 50, 1, 86, 4, 97, 3, 96, 0, 95, 8, 97, 2, 66, 5, 99, 6, 52, 9, 71 ],
+// [ 4, 98, 6, 73, 3, 82, 2, 51, 1, 71, 5, 94, 7, 85, 0, 62, 8, 95, 9, 79 ],
+// [ 0, 94, 6, 71, 3, 81, 7, 85, 1, 66, 2, 90, 4, 76, 5, 58, 8, 93, 9, 97 ],
+// [ 3, 50, 0, 59, 1, 82, 8, 67, 7, 56, 9, 96, 6, 58, 4, 81, 5, 59, 2, 96 ]
+// ]
+
 class App extends React.Component {
   constructor(props){
     super(props)
@@ -90,29 +70,21 @@ class App extends React.Component {
       algorithmMaxTimeSecs:30,
       algorithmType: 'hillClimbing' // random || hillClimbing
     }
-    //this.runOptimizationAlgo(problem, 10, 1)
-    // setTimeout( () => {this.runOptimizationAlgo(problem, 1, 1)},1000)
   }
   startJobShopWorker = () => {
-    //var myWorker = new Worker('worker.js');
     const workerInstance = new Worker(WebWorkerScript);
     
     workerInstance.addEventListener("message", e => {
-      console.log("Received response:");
-      console.log(e.data);
-      // We can have 2 different data types.
+      // We can have 2 different data types or a generic message stored in e.data
       // {"type":"iterationCount","value":200}
       // {"type":"newSchedule","value":[[],...]}
       if(e.data && e.data.type === "iterationCount"){
-        //console.log(`New Iteration Count ${e.data.value}`)
-        console.log("About to concate makeSpan history array")
         this.setState({
           iterations:e.data.iteration,
           makeSpanHistory:[...this.state.makeSpanHistory,...e.data.newMakeSpan]
         })
       }
       else if(e.data && e.data.type === "newSchedule"){
-        console.log(`New Schedule ${e.data.schedule}`)
         this.setState({
           schedule : e.data.schedule, makeSpan:e.data.makeSpan,
           minMakeSpanDetectedIteration: e.data.minMakeSpanDetectedIteration
@@ -135,7 +107,6 @@ class App extends React.Component {
   }
 
   componentDidMount(){
-    //console.log("component did mount activated")
     this.startJobShopWorker()
   }
   handleChange = (event)=>{
@@ -144,8 +115,6 @@ class App extends React.Component {
 
   handleRestartJobShopWorkerButton = (e)=>{
     e.preventDefault();
-    console.log("restarting this puppy.")
-    console.log(e)
     this.state.workerInstance.terminate();
     this.setState({
       schedule:[[],[]],
@@ -157,38 +126,80 @@ class App extends React.Component {
     
   }
   handleStopWorker = (e) => {
-    console.log("terminate worker")
     this.state.workerInstance.terminate();
-    console.log("terminate complete")
   }
   render(){
-    console.log("Render function re-running", this.state.schedule)
     const screenWidth = (window.innerWidth - 60)
     return (
       <div className="App">
-        <NavBar/>
-        <h3>Water Bottling Plant - MakeSpan Optimization</h3>
-        <p>
-          <strong>Number of Simulations Performed:</strong> {this.state.iterations}  | 
-          <strong>Minimum MakeSpan detected:</strong> {this.state.makeSpan} | <strong>Min detected after iteration :</strong> {this.state.minMakeSpanDetectedIteration}
-        </p>
-        <h6>Terminates after running 
-          <input type="number" style={{width:'4em'}} name="maxAlgorithmRepetition" onChange={this.handleChange} value={this.state.maxAlgorithmRepetition}/>
-          simulations or after 
-          
-          <input type="number" style={{width:'4em'}} name="algorithmMaxTimeSecs" onChange={this.handleChange} value={this.state.algorithmMaxTimeSecs} class="form-controll" placeholder="Max number of iterations"/>
-          seconds has passed or when 
-          <button className="ml-2" onClick={this.handleStopWorker}> Stop </button>
-          is clicked.
+        <NavBar>
+          <li class="nav-item">
+            <select className="form-control ml-2" name="algorithmType" onChange={this.handleChange} value={this.state.algorithmType}>
+              <option value="random">Random Search</option>
+              <option value="hillClimbing">Hill Climbing Search</option>
+            </select>
+          </li> 
 
-          Uses 
-          <select className="form-controll" name="algorithmType" onChange={this.handleChange} value={this.state.algorithmType}>
-            <option value="random">random search</option>
-            <option value="hillClimbing">neighbourhood search</option>
-          </select>
-          Algorithm. 
-          <button className="" onClick={this.handleRestartJobShopWorkerButton}>  Restart with new settings </button>
-        </h6>
+          <li class="nav-item ml-2">
+            <button className="btn btn-outline-danger ml-2" onClick={this.handleStopWorker}> Stop </button>
+          </li>
+          
+          <li class="nav-item ml-2">
+            <button className="btn btn-outline-success" onClick={this.handleRestartJobShopWorkerButton}>  Restart with new settings </button>
+          </li>
+        </NavBar>
+
+        <div className="container">
+          <div className="row">
+            <div className="col">
+              <table className=" table table-sm mt-2">
+                <thead>
+                  <tr>
+                    <th colSpan={2}>Simulation Parameters </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Number of Simulations</td>
+                    <td>{this.state.iterations} </td>
+                  </tr>
+                  <tr>
+                    <td>Minimal Makespan Detected</td>
+                    <td>{this.state.makeSpan}</td>
+                  </tr>
+                  <tr>
+                    <td>Min detected after iteration</td>
+                    <td>{this.state.minMakeSpanDetectedIteration}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+            <div className="col">
+              <table className="table table-sm mt-2">
+                <thead>
+                  <tr>
+                    <th colSpan={2}>Termination Criteria</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Number of Simuations</td>
+                    <td>
+                      <input type="number" style={{width:'4em'}} name="maxAlgorithmRepetition" onChange={this.handleChange} value={this.state.maxAlgorithmRepetition}/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Maximum Time in seconds</td>
+                    <td>
+                      <input type="number" style={{width:'4em'}} name="algorithmMaxTimeSecs" onChange={this.handleChange} value={this.state.algorithmMaxTimeSecs} class="form-controll" placeholder="Max number of iterations"/>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
         <div style={{marginTop:'10px'}}>
           <h6>Plot of makespan during each different simulation</h6>
@@ -202,69 +213,69 @@ class App extends React.Component {
         <div className="explanation">
 
         <p>
-The Chart above shows the order in which each operation in a water bottling plant must run on each machine to complete all bottling activities in the most efficient manner. 
-Watch the chart change as the algorithm finds more and more efficient way to run the factory over time. Simulation is slowed down for demonstration purpose.
-Run the simulations with different settings below: 
-</p>
-        
-          <hr></hr>
-          <h3>Explanation</h3>
+        The Chart above shows the order in which each operation in a water bottling plant must run on each machine to complete all bottling activities in the most efficient manner. 
+        Watch the chart change as the algorithm finds more and more efficient way to run the factory over time. Simulation is slowed down for demonstration purpose.
+        Run the simulations with different settings below: 
+        </p>
+                
+        <hr></hr>
+        <h3>Explanation</h3>
 
-In this demo, we are trying to optimize how to run a water bottling plant. We have 5 machines for different operations, and various different types of products we need to produce.
+          In this demo, we are trying to optimize how to run a water bottling plant. We have 5 machines for different operations, and various different types of products we need to produce.
 
 
-<ol>
-  <li>Machine 0 - Bottle Expansion Molding</li>
-  <li>Machine 1 - Water Cleaning or purifying Machine </li>
-  <li>Machine 2 - Pouring water / Filling Process </li>
-  <li>Machine 3 - Capping</li>
-  <li>Machine 4 - Labelling</li>
-</ol>
+        <ol>
+          <li>Machine 0 - Bottle Expansion Molding</li>
+          <li>Machine 1 - Water Cleaning or purifying Machine </li>
+          <li>Machine 2 - Pouring water / Filling Process </li>
+          <li>Machine 3 - Capping</li>
+          <li>Machine 4 - Labelling</li>
+        </ol>
 
-This factory produces 4 different types of water bottles, and each water bottling operation must be run in the following order:
-<ol>
-  <li><span style={{backgroundColor:`${jobIdToColour(0)}`}}>Job 0 - Spring Water 16oz </span>
-      <ol>
-        <li>Bottle Expansion - 10 seconds</li>
-        <li>Water Purifying - 30 seconds</li>
-        <li>Water Filling - 10 seconds</li>
-        <li>Bottle Capping - 10 seconds</li>
-        <li>Bottle Labeling - 8 seconds</li>
-      </ol>
-  </li>
-  <li><span style={{backgroundColor:`${jobIdToColour(1)}`}}>Job 1 - Distilled Water 16 oz</span>
-      <ol>
-        <li>Bottle Expansion - 50 seconds</li>
-        <li>Water Purifying - 60 seconds</li>
-        <li>Water Filling - 10 seconds</li>
-        <li>Bottle Capping - 10 seconds</li>
-        <li>Bottle Labeling - 16 seconds</li>
-      </ol>
-  </li>
-  <li><span style={{backgroundColor:`${jobIdToColour(2)}`}}>Job 2 - Distilled Water 32 oz</span>
-      <ol>
-        <li>Bottle Expansion - 30 seconds</li>
-        <li>Water Purifying - 90 seconds</li>
-        <li>Water Filling - 20 seconds</li>
-        <li>Bottle Capping - 10 seconds</li>
-        <li>Bottle Labeling - 16 seconds</li>
-      </ol>
-  </li>
-  <li><span style={{backgroundColor:`${jobIdToColour(3)}`}}>Job 3 - Bottoled Water 32 oz</span>
-      <ol>
-        <li>Bottle Expansion - 15 seconds</li>
-        <li>Water Purifying - 90 seconds</li>
-        <li>Water Filling - 20 seconds</li>
-        <li>Bottle Capping - 10 seconds</li>
-        <li>Bottle Labeling - 10 seconds</li>
-      </ol>
-  </li>
-</ol>
+        This factory produces 4 different types of water bottles, and each water bottling operation must be run in the following order:
+        <ol>
+          <li><span style={{backgroundColor:`${jobIdToColour(0)}`}}>Job 0 - Spring Water 16oz </span>
+              <ol>
+                <li>Bottle Expansion - 10 seconds</li>
+                <li>Water Purifying - 30 seconds</li>
+                <li>Water Filling - 10 seconds</li>
+                <li>Bottle Capping - 10 seconds</li>
+                <li>Bottle Labeling - 8 seconds</li>
+              </ol>
+          </li>
+          <li><span style={{backgroundColor:`${jobIdToColour(1)}`}}>Job 1 - Distilled Water 16 oz</span>
+              <ol>
+                <li>Bottle Expansion - 50 seconds</li>
+                <li>Water Purifying - 60 seconds</li>
+                <li>Water Filling - 10 seconds</li>
+                <li>Bottle Capping - 10 seconds</li>
+                <li>Bottle Labeling - 16 seconds</li>
+              </ol>
+          </li>
+          <li><span style={{backgroundColor:`${jobIdToColour(2)}`}}>Job 2 - Distilled Water 32 oz</span>
+              <ol>
+                <li>Bottle Expansion - 30 seconds</li>
+                <li>Water Purifying - 90 seconds</li>
+                <li>Water Filling - 20 seconds</li>
+                <li>Bottle Capping - 10 seconds</li>
+                <li>Bottle Labeling - 16 seconds</li>
+              </ol>
+          </li>
+          <li><span style={{backgroundColor:`${jobIdToColour(3)}`}}>Job 3 - Bottoled Water 32 oz</span>
+              <ol>
+                <li>Bottle Expansion - 15 seconds</li>
+                <li>Water Purifying - 90 seconds</li>
+                <li>Water Filling - 20 seconds</li>
+                <li>Bottle Capping - 10 seconds</li>
+                <li>Bottle Labeling - 10 seconds</li>
+              </ol>
+          </li>
+        </ol>
 
-Algorithm that runs in the background finds the most optimal way of running all the jobs in the given order. 
+        Algorithm that runs in the background finds the most optimal way of running all the jobs in the given order. 
 
-The Chart shows the order in which each job must run on each machine to complete all bottling activities in the most efficient manner. 
-Watch the chart change as the algorithm finds more and more efficient way to run the factory. 
+        The Chart shows the order in which each job must run on each machine to complete all bottling activities in the most efficient manner. 
+        Watch the chart change as the algorithm finds more and more efficient way to run the factory. 
 
         </div>
       </div>
