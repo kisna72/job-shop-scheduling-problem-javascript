@@ -1,5 +1,3 @@
-import GanttChart from "./GattChart";
-
 const workercode = () => {
     
     const JSSPProblemInstance = (n,m) => {
