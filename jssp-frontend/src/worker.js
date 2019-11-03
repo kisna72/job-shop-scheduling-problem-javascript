@@ -148,16 +148,9 @@ const workercode = () => {
             for(let j = 0; j < numMachines; j++){
                 jobs.push(i)
             }
-            //const values = new Array(numMachines).fill(i) // Fill with Job Number 
-            //jobs.concat(values)
-            //jobs = [...jobs, ...values]
         }
-        console.log("done creating jobs")
-        console.log(jobs)
         const jssp1d = new JSSP1DEncoding(FishesYatesShuffle(jobs))
-        console.log(jssp1d)
         return jssp1d
-        console.log(jobs)
     };
     function sleep(miliseconds) { 
         /**
@@ -172,9 +165,6 @@ const workercode = () => {
      }
      
     function _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType) {
-        console.log("inside run optimization , this is ");
-        console.log(this);
-        console.log(generateRandom1D && "generate Random 1d is available")
         let makeSpan = Infinity;
         const algoStartTime = (new Date).getTime();
         const algoMaxEndTime = algoStartTime + (algorithmMaxTimeSecs * 1000)
@@ -185,7 +175,7 @@ const workercode = () => {
                 console.log("Ran for too long already")
                 break;
             }
-
+            // alternative
             if( (i%100==0) && (new Date).getTime() > algoMaxEndTime){ //Run time check every 100th run.
                 console.log("Ending because of time limit")
                 console.log("Ran times : " , i)
@@ -197,7 +187,7 @@ const workercode = () => {
 
             const ganttFromRandInput = randomizedInput.JSSP1dToGantt(problemCopy)
             const newMakeSpan = ganttFromRandInput.getMakeSpan();
-            console.log("adding to newmakespan from worer")
+
             makeSpanHistory.push(newMakeSpan)
             if(i%1  === 0){
                 const returnData = {
@@ -206,17 +196,14 @@ const workercode = () => {
                     newMakeSpan:makeSpanHistory
                 }
                 this.postMessage(returnData);
-                sleep(1*200) // Give UI thread enough time to renderthis.
+                sleep(1*200) // Give UI thread enough time to render this.
                 makeSpanHistory.length = 0
             }
             
             // console.log(ganttFromRandInput.schedule[0])
             if(newMakeSpan < makeSpan){
                 makeSpan = newMakeSpan
-                // gantt = ganttFromRandInput
                 bestSolution1DEncoded = randomizedInput
-                console.log("Found Better", ganttFromRandInput)
-                console.log("New Make Span at index ", i, newMakeSpan)
                 this.postMessage("Got New MakeSpan")
                 const returnData = {
                     'type':'newSchedule',
@@ -226,25 +213,17 @@ const workercode = () => {
                 }
                 this.postMessage(returnData);
                 sleep(1*1000)
-                // this.setState({
-                //   schedule:ganttFromRandInput.schedule,
-                //   makeSpan:makeSpan
-                // })
+
             }
         }
     }
 
     onmessage = function(e) {
         const that = this;
-        console.log("this inside onmessage")
-        console.log(this)
-        console.log('Message received from main script');
-        console.log("message", e);
         const { problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType} = e.data; 
         console.log(problem, algorithmMaxTimeSecs);
         _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType, that)
         var workerResult = 'Received from main: ' + (e.data);
-        console.log('Posting message back to main script');
         this.postMessage(workerResult);
     }
 };
