@@ -1,17 +1,17 @@
-# job-shop-scheduling-problem-javascript
-Job Shop Scheduling Problem solved in Javascript
+# Job Shop Scheduling Problem Javascript
 
-React Application that demonstrates how to solve a Job Shop Scheduling Problem with different algorithms. See [https://en.wikipedia.org/wiki/Job_shop_scheduling(wikipedia) for descriptions of JSSP problems.
+React Application that demonstrates how to solve a Job Shop Scheduling Problem with different algorithms. See [wikipedia](https://en.wikipedia.org/wiki/Job_shop_scheduling) for descriptions of JSSP problems.
 
 ## Why?
 I was looking to learn how to solve discrete optimization class of problems - however realized that all the examples are in python, C, C++ or Java. Pretty much all the open source libraries are design to run on the servers. I wanted to write a demonstration application in javascript - to not only learn the data structures and algorithms behind solving such problems but also to showcases feasibility of running such algorithms in the browser's environment itself. 
 
 ### Key things to notice: 
-1. Web worker is utilized to run the algorithm itself. There is message passing between react applicatio and the web-worker to move data around. 
-2. React app is responsible for rendering makespan chart and the GanttChart of best-yet solution. 
-3. You can stop or restart solution at any time, and you are always guarenteed the best-so-far solution. 
-4. Becauase at the end of day - different algorithm's are choosing solution space randomly - since its not possible to go over every single possible solutions due to large number of permutations, two different runs might very well produce different results. However - there are 'smart' ways to choose randomly - which is called meta heuristics. 
-5. Both algorithms produce fairly good solutions most of the time for our demo problem of water plant manufacturing. 
+1. Algorithm to solve the problem is written from scratch. No third party libraries. 
+2. Web worker is utilized to run the algorithm itself. There is message passing between react applicatio and the web-worker to move data around. View `worker.js` file for the algorithm itself.
+3. React app is responsible for rendering makespan chart and the GanttChart of best-yet solution. 
+4. You can stop or restart solution at any time, and you are always guarenteed the best-so-far solution. 
+5. Becauase at the end of day - different algorithm's are choosing solution space randomly - since its not possible to go over every single possible solutions due to large number of permutations, two different runs might very well produce different results. However - there are 'smart' ways to choose randomly - which is called meta heuristics. 
+6. Both algorithms produce fairly good solutions most of the time for our demo problem of water plant manufacturing. 
 
 ## How to Run Locally? 
 
