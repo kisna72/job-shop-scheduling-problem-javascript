@@ -1,8 +1,9 @@
 const workercode = () => {
     
-    const JSSPProblemInstance = (n,m) => {
+    const JSSPProblemInstance = (n,m,mbar) => {
         this.numJobs = n;
-        this.numMachines = m
+        this.numMachines = m;
+        this.numMachineType = mbar;
         this.jobs = []; // list of lists.
     }
     
@@ -66,13 +67,25 @@ const workercode = () => {
             
             // Keep Track of last time for each job.
             const lastJobTime = new Array(jobInstance.numJobs).fill(0)
-
             this.jssp1d.forEach(jobNumber => {
                 // job jobNumber is assigned to its respective first. 
                 const jobDef = jobInstance.jobs[jobNumber]
-                const firstJob = jobDef.splice(0,2);
-                const machine = firstJob[0];
-                const time = firstJob[1]
+                const numberOfMachinesAllowed = jobDef[0]; // 1 -> slice to 2*1 + 1 = 3. 2 slice to 5.
+                const sliceEnd = 2*numberOfMachinesAllowed + 1;
+                const firstJob = jobDef.splice(0,sliceEnd);
+                /** Next up -> we have numberofMachinesallowed say 3. firs job = [3,1,20,3,30,4,50]
+                 * We will randomly choose a machine from given machines.
+                */
+                const jobList = []
+                for(let i = 0; i < numberOfMachinesAllowed; i++ ){
+                   const unitJob = [firstJob[i*2 + 1], firstJob[i*2 + 2]]
+                   jobList.push(unitJob)
+                }
+                
+                const choosenMachineJob = randomFromArray(jobList);
+                //const allowedMachinesWithTimeRequirement = firstJob.
+                const machine = choosenMachineJob[0]; // In this step randomly choose machine out of available ones.
+                const time = choosenMachineJob[1]
         
                 // Now fill Gantt Chart
                 const firstAvailableTimeOnMachine = ganttChart[machine].length === 0 ? 0 : ganttChart[machine][ganttChart[machine].length -1]
@@ -108,6 +121,12 @@ const workercode = () => {
         }
       
         return array;
+    }
+    
+    function randomFromArray(array){
+        // Given an array of length l, return a random item.
+        const randomIndex = Math.floor(Math.random() * array.length)
+        return array[randomIndex] // TODO produce random item.
     }
     
     function generateRandom1D(numMachines, numJobs, base, nswap) {
@@ -165,7 +184,7 @@ const workercode = () => {
                 console.log("Ran times : " , i)
                 break;
             }
-            const randomizedInput = generateRandom1D(problem.numMachines, problem.numJobs, algorithmType === "hillClimbing" ? bestSolution1DEncoded && bestSolution1DEncoded.jssp1d : null)
+            const randomizedInput = generateRandom1D(problem.numMachineType, problem.numJobs, algorithmType === "hillClimbing" ? bestSolution1DEncoded && bestSolution1DEncoded.jssp1d : null)
             const problemCopy = Object.assign({}, problem)
             problemCopy.jobs = JSON.parse(JSON.stringify(problem.jobs))
 

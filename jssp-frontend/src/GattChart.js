@@ -7,7 +7,8 @@ const WATER_BOTTLING_WATER_MACHINES = [
     "Water Cleaning/ Purifying",
     "Water Filling",
     "Bottle Capping",
-    "Bottle Labeling"
+    "Bottle Labeling",
+    "Bottle Expansion Mold 2"
 ]
 class GanttChart extends React.Component {
     render(){

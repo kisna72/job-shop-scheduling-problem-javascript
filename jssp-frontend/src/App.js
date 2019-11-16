@@ -9,7 +9,7 @@ import { NavBar } from './components/navbar';
 import TwoDPlot from './TwoDPlot';
 
 // Create a new instance of JSSPProblemInstance and assign jobs for water bottle plant.
-const problem = new JSSPProblemInstance(4,5) // Instantiate with no data. 
+const problem = new JSSPProblemInstance(4,6,5) // Instantiate with no data. j jobs and m machines.
 /**
  * Water Bottoling Plant that does 4 different types of water bottles. 
  * Job 0 - Spring Water 16oz
@@ -27,10 +27,12 @@ const problem = new JSSPProblemInstance(4,5) // Instantiate with no data.
  * Jobs must be run in the following order
  */
 problem.jobs = [
-  [0, 10, 1, 10, 2, 10, 3, 10, 4, 8],
-  [0, 50, 1, 15, 2, 10, 3, 10, 4, 16],
-  [0, 30, 1, 12, 2, 20, 3, 10, 4, 16],
-  [0, 15, 1, 30, 2, 20, 3, 10, 4, 10],
+  // Read it as follows:
+  // first job can run on 1 machine. Machine 0 for time 10, next it runs on 1 machine - machine 1 for time 10 etc.
+  [2, 0, 10, 5,20, 1, 1, 10, 1, 2, 10, 1, 3, 10, 1, 4, 8], // first job can run in 1 machine.
+  [2, 0, 50, 5, 30, 1, 1, 15, 1, 2, 10, 1, 3, 10, 1, 4, 16],
+  [1, 0, 30, 1, 1, 12, 1, 2, 20, 1, 3, 10, 1, 4, 16],
+  [1, 0, 15, 1, 1, 30, 1, 2, 20, 1, 3, 10, 1, 4, 10],
 ]
 
 // Example Problem Statement

@@ -1,6 +1,7 @@
-function JSSPProblemInstance(n,m){
+function JSSPProblemInstance(n,m,mbar){
     this.numJobs = n;
-    this.numMachines = m
+    this.numMachines = m;
+    this.numMachineType = mbar;
     this.jobs = []; // list of lists.
 }
 
