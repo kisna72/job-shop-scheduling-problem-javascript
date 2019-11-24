@@ -9,7 +9,7 @@ import { NavBar } from './components/navbar';
 import TwoDPlot from './TwoDPlot';
 
 // Create a new instance of JSSPProblemInstance and assign jobs for water bottle plant.
-const problem = new JSSPProblemInstance(4,6,5) // Instantiate with no data. j jobs and m machines.
+const problem = new JSSPProblemInstance(4,6) // Instantiate with no data. j jobs and m machines.
 /**
  * Water Bottoling Plant that does 4 different types of water bottles. 
  * Job 0 - Spring Water 16oz
@@ -28,13 +28,26 @@ const problem = new JSSPProblemInstance(4,6,5) // Instantiate with no data. j jo
  */
 problem.jobs = [
   // Read it as follows:
-  // first job can run on 1 machine. Machine 0 for time 10, next it runs on 1 machine - machine 1 for time 10 etc.
-  [2, 0, 10, 5,20, 1, 1, 10, 1, 2, 10, 1, 3, 10, 1, 4, 8], // first job can run in 1 machine.
+  // first job can run on 2 machines. Machine 0 for time 10 OR Machine 5 for time 20, next it runs on 1 machine - machine 1 for time 10 etc.
+  [2, 0, 10, 5, 20, 1, 1, 10, 1, 2, 10, 1, 3, 10, 1, 4, 8, 1, 4, 10, 1, 4, 10], // first job can run in 1 machine.
   [2, 0, 50, 5, 30, 1, 1, 15, 1, 2, 10, 1, 3, 10, 1, 4, 16],
-  [1, 0, 30, 1, 1, 12, 1, 2, 20, 1, 3, 10, 1, 4, 16],
-  [1, 0, 15, 1, 1, 30, 1, 2, 20, 1, 3, 10, 1, 4, 10],
+  [2, 0, 30, 5, 50, 1, 1, 12, 1, 2, 20, 1, 3, 10, 1, 4, 16],
+  [2, 0, 15, 5, 20, 1, 1, 30, 1, 2, 20, 1, 3, 10, 1, 4, 10],
 ]
 
+// Infer number of machines the job needs to run based on job definition.
+problem.numMachineByJobs = []
+problem.jobs.forEach(jobDefArr => {
+  let numMachines = 0
+  let nextIndexToCheck = 0;
+  for(let i = 0; i < jobDefArr.length; i++ ){
+    if(i == nextIndexToCheck){
+      numMachines += 1
+      nextIndexToCheck = i + jobDefArr[i]*2 + 1
+    }
+  }
+  problem.numMachineByJobs.push(numMachines)
+})
 // Example Problem Statement
 // problem.jobs = [ 
 //   [ 0, 10, 1, 20, 2, 20, 3, 40, 4, 10 ],

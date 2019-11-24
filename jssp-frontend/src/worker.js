@@ -129,7 +129,15 @@ const workercode = () => {
         return array[randomIndex] // TODO produce random item.
     }
     
-    function generateRandom1D(numMachines, numJobs, base, nswap) {
+    function generateRandom1D(numMachineByJobs, numJobs, base, nswap) {
+        /**
+         * For Non-Flexible Job Shop Problems, each job has to go through all the same machines.
+         * For Flexible Job Shop Problems, each job has to go through a arbitrary number of machines.
+         *     Hence we'll need a data structure that holds number of machines for each job. 
+         *     GenerateRandom1D function can take that datastructure and operate on it. 
+         *     numJobs = 2
+         *     numMachines =  [2,2] -> job 0 needs numMachines[0] jobs etc...
+         */
         if (base){
             // if base is passed in - just do a swap once. nswap not used at the moment.
             function swap(){
@@ -148,11 +156,13 @@ const workercode = () => {
         // We want each jobs repetead numMachines of times. 
         let jobs = []
         for(let i = 0;i < numJobs; i++){
-            for(let j = 0; j < numMachines; j++){
+            // TODO > Instead of numMachines
+            for(let j = 0; j < numMachineByJobs[i]; j++){
                 jobs.push(i)
             }
         }
         const jssp1d = new JSSP1DEncoding(FishesYatesShuffle(jobs))
+        console.log(jssp1d)
         return jssp1d
     };
     function sleep(miliseconds) { 
@@ -168,6 +178,7 @@ const workercode = () => {
      }
      
     function _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType) {
+        console.log("starting algo")
         let makeSpan = Infinity;
         const algoStartTime = (new Date).getTime();
         const algoMaxEndTime = algoStartTime + (algorithmMaxTimeSecs * 1000)
@@ -184,7 +195,7 @@ const workercode = () => {
                 console.log("Ran times : " , i)
                 break;
             }
-            const randomizedInput = generateRandom1D(problem.numMachineType, problem.numJobs, algorithmType === "hillClimbing" ? bestSolution1DEncoded && bestSolution1DEncoded.jssp1d : null)
+            const randomizedInput = generateRandom1D(problem.numMachineByJobs, problem.numJobs, algorithmType === "hillClimbing" ? bestSolution1DEncoded && bestSolution1DEncoded.jssp1d : null)
             const problemCopy = Object.assign({}, problem)
             problemCopy.jobs = JSON.parse(JSON.stringify(problem.jobs))
 
