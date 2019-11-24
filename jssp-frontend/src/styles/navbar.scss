@@ -1,0 +1,20 @@
+.factory-navbar {
+  display: flex;
+  flex-direction: row;
+  width:100%;
+  background-color: darkgray;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+.factory-navbar__menu-item {
+  // flex-grow: 1;
+  padding: 10px;
+  color: white;
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  list-style: none;
+  font-size: 1.2em;
+}
