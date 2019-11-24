@@ -1,0 +1,13 @@
+.machines-wrapper {
+  display: flex;
+  flex-direction: row;
+
+  .machines-wrapper__main{
+    flex-grow: 1;
+  }
+
+  .machines-wrapper__categories {
+
+  }
+  
+}
