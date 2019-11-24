@@ -12,9 +12,7 @@ const WATER_BOTTLING_WATER_MACHINES = [
 ]
 class GanttChart extends React.Component {
     render(){
-        console.log(this.props)
         const allEnds = this.props.schedule.map(schArr => schArr[schArr.length-1])
-        console.log(allEnds)
         const maxTime = Math.max(...allEnds)
         return (
         

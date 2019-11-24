@@ -5,7 +5,6 @@ import {XYPlot, LineSeries, HorizontalGridLines, VerticalGridLines, XAxis, YAxis
 
 class TwoDPlot extends Component {
   render() {
-    console.log(this.props);
     // Get props.data = [123,345,345,999 ...] from parent. 
     const data = this.props.data.map((val,idx)=>{
       return {
