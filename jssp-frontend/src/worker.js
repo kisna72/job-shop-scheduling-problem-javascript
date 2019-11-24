@@ -162,7 +162,6 @@ const workercode = () => {
             }
         }
         const jssp1d = new JSSP1DEncoding(FishesYatesShuffle(jobs))
-        console.log(jssp1d)
         return jssp1d
     };
     function sleep(miliseconds) { 
@@ -178,7 +177,6 @@ const workercode = () => {
      }
      
     function _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType) {
-        console.log("starting algo")
         let makeSpan = Infinity;
         const algoStartTime = (new Date).getTime();
         const algoMaxEndTime = algoStartTime + (algorithmMaxTimeSecs * 1000)
