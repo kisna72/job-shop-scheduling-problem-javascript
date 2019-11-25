@@ -13,9 +13,9 @@ class Machines extends React.Component {
           Please enter the machine below. Each machine must have a name.
           Applying categories is optional. You will assign jobs 
         </p>
-        <form>
-          <input name='name' placeholder='Please Enter Machine name'></input>
-          <select name='category'>
+        <form className="machine-form">
+          <input className="form-control" name='name' placeholder='Please Enter Machine name'></input>
+          <select className="form-control" name='category'>
             <option>Category 1</option>
             <option>Category 2</option>
           </select>
@@ -30,7 +30,7 @@ class Machines extends React.Component {
           new categories to existing machines.
         </p>
         <form>
-          <input name='category' placeholder='Enter a new Category'></input>
+          <input className="form-control" name='category' placeholder='Enter a new Category'></input>
         </form>
       </div>
     </div>)

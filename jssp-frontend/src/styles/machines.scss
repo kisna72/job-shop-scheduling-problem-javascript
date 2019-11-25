@@ -1,13 +1,19 @@
 .machines-wrapper {
   display: flex;
   flex-direction: row;
-
+  padding-left: 40px;
+  padding-right: 40px;
   .machines-wrapper__main{
     flex-grow: 1;
+    padding-right: 40px;
   }
 
   .machines-wrapper__categories {
+    max-width: 40%;
+  }  
+}
 
-  }
-  
+.machine-form {
+  display: flex;
+  flex-direction: column;
 }
