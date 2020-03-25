@@ -9,7 +9,8 @@ import { NavBar } from './components/navbar';
 import TwoDPlot from './TwoDPlot';
 
 // Create a new instance of JSSPProblemInstance and assign jobs for water bottle plant.
-const problem = new JSSPProblemInstance(4,6) // Instantiate with no data. j jobs and m machines.
+
+const problem = new JSSPProblemInstance(5,6) // Instantiate with no data. j jobs and m machines.
 /**
  * Water Bottoling Plant that does 4 different types of water bottles. 
  * Job 0 - Spring Water 16oz
@@ -28,11 +29,13 @@ const problem = new JSSPProblemInstance(4,6) // Instantiate with no data. j jobs
  */
 problem.jobs = [
   // Read it as follows:
-  // first job can run on 2 machines. Machine 0 for time 10 OR Machine 5 for time 20, next it runs on 1 machine - machine 1 for time 10 etc.
-  [2, 0, 10, 5, 20, 1, 1, 10, 1, 2, 10, 1, 3, 10, 1, 4, 8, 1, 4, 10, 1, 4, 10], // first job can run in 1 machine.
-  [2, 0, 50, 5, 30, 1, 1, 15, 1, 2, 10, 1, 3, 10, 1, 4, 16],
+  // first job -> first step can run on 2 machines. Machine 0 for time 10 OR Machine 5 for time 20, next it runs on 1 machine - machine 1 for time 10 etc.
+  [2, 0, 10, 5, 20, 1, 1, 10, 1, 2, 10, 1, 3, 10, 1, 4, 8, 1, 4, 10, 1, 4, 10],
+  // second Job -> first step can run on 2 machines. Machine 0 for time 50 OR machine 5 for time 30, second step on 1 machine - machine 1 for 15 times
+  [2, 0, 50, 5, 30, 1, 1, 15, 1, 2, 10, 1, 3, 10,],// 1, 4, 16], // Very Very Flexible...
   [2, 0, 30, 5, 50, 1, 1, 12, 1, 2, 20, 1, 3, 10, 1, 4, 16],
   [2, 0, 15, 5, 20, 1, 1, 30, 1, 2, 20, 1, 3, 10, 1, 4, 10],
+  [1, 2, 120]
 ]
 
 // Infer number of machines the job needs to run based on job definition.
@@ -41,7 +44,7 @@ problem.jobs.forEach(jobDefArr => {
   let numMachines = 0
   let nextIndexToCheck = 0;
   for(let i = 0; i < jobDefArr.length; i++ ){
-    if(i == nextIndexToCheck){
+    if(i === nextIndexToCheck){
       numMachines += 1
       nextIndexToCheck = i + jobDefArr[i]*2 + 1
     }
@@ -87,6 +90,7 @@ class App extends React.Component {
     }
   }
   startJobShopWorker = () => {
+    console.log("started worker")
     const workerInstance = new Worker(WebWorkerScript);
     
     workerInstance.addEventListener("message", e => {

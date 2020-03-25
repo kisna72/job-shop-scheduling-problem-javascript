@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import FactoryOptimizationApp from './factoryOptimizationApp'; //Top level component that includes the optimizationWorkFlow
 import * as serviceWorker from './serviceWorker';
 

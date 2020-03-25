@@ -1,8 +1,18 @@
 import React from 'react';
 import MainAppNavBar from './mainAppComponents/mainAppNavBar';
-import Machines from './mainAppComponents/Machines';
+import Machines from './Pages/Machines';
+import Categories from './Pages/Categories';
 import Jobs from './mainAppComponents/Jobs';
 import Parameters from './mainAppComponents/Parameters';
+import JobSetup from './JobSetup';
+import App from './App';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  NavLink
+} from "react-router-dom";
 /**
  * Main component that handles state of the solver, machines, jobs etc.
  */
@@ -14,11 +24,11 @@ class FactoryOptimizationApp extends React.Component {
     this.state = {
       activeMenu: 'Machines', // machine or jobs or params or solution
       machines: [
-        { id: 1, name: 'Water Bottle Expansion', categories: [1] },
+        { id: 1, name: 'Water Bottle Expansion'},
         { id: 2, name: 'Water Cleaning' }
       ],
       categories: [
-        { id: 1, name: 'waterBottle' }
+        { id: 1, name: 'Expansion', machines:[]}
       ],
       jobs: [
         {
@@ -49,16 +59,17 @@ class FactoryOptimizationApp extends React.Component {
 
   /**
    * CRUD Operations for machines (minus read obvs)
+   * 
    */
-  createMachine = (machine) => {
-    this.setState({
+  createMachine = async (machine) => {
+    await this.setState({
       machines: [...this.state.machines,machine]
     })
   }
   updateMachine = (machine) => {
     // get machine by id and replace its value with the value contained in machine and save in state.
     const machines = this.state.machines
-    for(let i; i < machines.length; i++){
+    for(let i =0 ; i < machines.length; i++){
       if(machines[i].id === machine.id){
         machines[i] = [...machine]
         break;
@@ -70,7 +81,7 @@ class FactoryOptimizationApp extends React.Component {
   }
   deleteMachine = (machine) => {
     const machines = this.state.machines
-    for(let i; i < machines.length; i++){
+    for(let i =0; i < machines.length; i++){
       if(machines[i].id === machine.id){
         delete machines[i]
         break;
@@ -82,23 +93,83 @@ class FactoryOptimizationApp extends React.Component {
   }
 
   /**
+   * CRUD Operations for Categories
+   */
+  createCategory = (category) => {
+    this.setState({
+      categories: [...this.state.categories, category]
+    })
+    console.log(category)
+  }
+  updateCategory = (category) => {
+    // get machine by id and replace its value with the value contained in machine and save in state.
+    const categories = [...this.state.categories]
+    for(let i =0 ; i < categories.length; i++){
+      if(categories[i].id === category.id){
+        categories[i] = [...category]
+        break;
+      }
+    }
+    this.setState({
+      categories: [...categories]
+    })
+    
+  }
+
+  /**
    * CRUD Operations for Jobs
    */
   createJob = (job) => {
-
+    console.log("create job")
   }
 
 
-  render(){
+  render() {
     return (
-      <>
-        <MainAppNavBar handleClick={this.handleNavBarClick} activeMenu={this.state.activeMenu}/>
-        {this.state.activeMenu === "Machines" ? <Machines createMachine updateMachine deleteMachine /> : null}
-        {this.state.activeMenu === "Jobs" ? <Jobs /> : null}
-        {this.state.activeMenu === "Parameters" ? <Parameters  /> : null}
-      </>
+      <Router>
+        <nav>
+          <ul className='factory-navbar'>
+            <NavLink to="">
+              <li className='factory-navbar__menu-item'>Machines</li> 
+            </NavLink>
+            <NavLink to="jobs">
+              <li className='factory-navbar__menu-item'>Jobs</li> 
+            </NavLink>
+            <NavLink to="parameters">
+              <li className='factory-navbar__menu-item'>Solution Parameters</li> 
+            </NavLink>
+            <NavLink to="solution">
+              <li className='factory-navbar__menu-item'>Solve</li> 
+            </NavLink>
+          </ul>
+        </nav>
+        <Switch>
+          <Route path="/" exact={true}>
+            <Machines 
+              createMachine={this.createMachine} 
+              updateMachine={this.updateMachine} 
+              deleteMachine={this.deleteMachine}
+              machines={this.state.machines}
+            />
+            <Categories
+              categories={this.state.categories}
+              machines={this.state.machines}
+              createCategory={this.createCategory}
+            />
+          </Route>
+          <Route path="/jobs">
+            <Jobs />
+          </Route>
+          <Route path="/parameters">
+            <Parameters  />
+          </Route>
+          <Route path="/solution">
+            <App/>
+          </Route>
+        </Switch>
+      </Router>
     )
   }
-}
+};
 
 export default FactoryOptimizationApp

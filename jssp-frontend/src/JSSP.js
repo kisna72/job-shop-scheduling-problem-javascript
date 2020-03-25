@@ -1,3 +1,9 @@
+/**
+ * Returns a new instance of JSSP Problem Instance. 
+ * @param {*} n number of Jobs
+ * @param {*} m number of Machines
+ * @param {*} mbar Don't Use
+ */
 function JSSPProblemInstance(n,m,mbar){
     this.numJobs = n;
     this.numMachines = m;
