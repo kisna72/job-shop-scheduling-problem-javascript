@@ -62,33 +62,19 @@ class FactoryOptimizationApp extends React.Component {
    * 
    */
   createMachine = async (machine) => {
-    await this.setState({
+    machine.id = this.state.machines.length + 1
+    this.setState({
       machines: [...this.state.machines,machine]
     })
   }
   updateMachine = (machine) => {
-    // get machine by id and replace its value with the value contained in machine and save in state.
-    const machines = this.state.machines
-    for(let i =0 ; i < machines.length; i++){
-      if(machines[i].id === machine.id){
-        machines[i] = [...machine]
-        break;
-      }
-    }
     this.setState({
-      machines: [...machines]
+      machines: this.state.machines.map(mac => mac.id === machine.id ? machine : mac)
     })
   }
   deleteMachine = (machine) => {
-    const machines = this.state.machines
-    for(let i =0; i < machines.length; i++){
-      if(machines[i].id === machine.id){
-        delete machines[i]
-        break;
-      }
-    }
     this.setState({
-      machines: [...machines]
+      machines: this.state.machines.filter(mac => mac.id !==  machine.id)
     })
   }
 
@@ -96,24 +82,21 @@ class FactoryOptimizationApp extends React.Component {
    * CRUD Operations for Categories
    */
   createCategory = (category) => {
+    category.id = this.state.categories.reduce((prev,cur) => cur.id + 1, 1)
     this.setState({
       categories: [...this.state.categories, category]
     })
-    console.log(category)
   }
   updateCategory = (category) => {
-    // get machine by id and replace its value with the value contained in machine and save in state.
-    const categories = [...this.state.categories]
-    for(let i =0 ; i < categories.length; i++){
-      if(categories[i].id === category.id){
-        categories[i] = [...category]
-        break;
-      }
-    }
     this.setState({
-      categories: [...categories]
+      categories: this.state.categories.map(cat => cat.id === category.id ? category : cat)
     })
-    
+  }
+  deleteCategory = (category) => {
+    console.log("deleting ", category)
+    this.setState({
+      categories: this.state.categories.filter(cat => cat.id !== category.id)
+    })
   }
 
   /**
@@ -145,16 +128,19 @@ class FactoryOptimizationApp extends React.Component {
         </nav>
         <Switch>
           <Route path="/" exact={true}>
+            <Categories
+              categories={this.state.categories}
+              machines={this.state.machines}
+              createCategory={this.createCategory}
+              updateCategory={this.updateCategory}
+              deleteCategory={this.deleteCategory}
+            />
             <Machines 
               createMachine={this.createMachine} 
               updateMachine={this.updateMachine} 
               deleteMachine={this.deleteMachine}
               machines={this.state.machines}
-            />
-            <Categories
               categories={this.state.categories}
-              machines={this.state.machines}
-              createCategory={this.createCategory}
             />
           </Route>
           <Route path="/jobs">

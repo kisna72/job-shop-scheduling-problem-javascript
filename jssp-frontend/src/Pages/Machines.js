@@ -36,7 +36,7 @@ class Machines extends React.Component {
           <tbody>
             {this.props.machines.map(machine => {
               return (
-                <tr>
+                <tr key={machine.id}>
                   <td>{machine.id}</td>
                   <td>{machine.name}</td>
                 </tr>)
@@ -47,7 +47,7 @@ class Machines extends React.Component {
           Please enter the machine below. Each machine must have a name.
           Once all machines are entered, you can create categories and apply categories to each machines.
         </p>
-        <form class="" onSubmit={this.addMachine}>
+        <form className="" onSubmit={this.addMachine}>
           <TextInput
             id="machine-name" 
             label="Name for your machine"
@@ -55,7 +55,7 @@ class Machines extends React.Component {
             value={this.state.name}
             onChange={this.handleChange}
           />
-          <button type="submit" class="btn btn-primary mb-2" disabled={this.state.name === "" }>Add Machine</button>
+          <button type="submit" className="btn btn-primary mb-2" disabled={this.state.name === "" }>Add Machine</button>
         </form>
       </div>
     </div>)

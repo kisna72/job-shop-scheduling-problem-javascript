@@ -1,10 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextInput } from '../sharedComponents/react/Input';
+import { FaRegTrashAlt, FaEdit  } from 'react-icons/fa';
 import '../styles/kr-card.css';
 import '../styles/kr-form.css';
+
 /**
- * 
+ * Handles Showing Category in a Table Row. Also Handles deleting and Editing based on user input. 
+ * @param {{category:{id:string,name:string},updateCategory:function, deleteCategory: function }} props 
  */
+function CategoryRow(props){
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(props.category.name); // For Managing state during editing 
+
+  const handleEditIconClick = function(){
+    setEditing(true)
+  }
+  const handleChangeWhenEditing = function(event){
+    setName(event.target.value)
+  }
+  const handleSave = function(){
+    props.updateCategory({
+      ...props.category,
+      name
+    })
+    setEditing(false)
+  }
+  const handleCancel = function () {
+    setEditing(false)
+  }
+
+
+  if(editing){
+    return (
+      <tr key={props.category.id}>
+      <td>{props.category.id}</td>
+      <td>
+        <input value={name} onChange={handleChangeWhenEditing}>
+        </input>
+      </td>
+      <td>
+        <div className="d-flex justify-content-around">
+          <button onClick={handleSave}>Save</button>
+          <button onClick={handleCancel}>Cancel</button>
+        </div>
+      </td>
+    </tr>
+    )
+  }
+
+  return (
+    <tr key={props.category.id}>
+        <td>{props.category.id}</td>
+        <td>{props.category.name}</td>
+        <td>
+          <div className="d-flex justify-content-around">
+            <FaEdit onClick={handleEditIconClick}/>
+            <FaRegTrashAlt onClick={() => props.deleteCategory(props.category)}/>
+          </div>
+        </td>
+      </tr>
+  )
+}
+
 class Categories extends React.Component {
   constructor(props) {
     super(props)
@@ -34,22 +91,30 @@ class Categories extends React.Component {
       <div className="machines-wrapper__categories ml-3 kr-card">
 
         <h3>Categories</h3>
-        <table>
+        <table className="table">
           <thead>
             {this.props.categories.length > 0 && 
               <tr>
                 <th>Id</th>
                 <th>Name</th>
+                <td>Actions</td>
               </tr>
             }
           </thead>
           <tbody>
             {this.props.categories.map(category => {
               return (
-                <tr>
-                  <td>{category.id}</td>
-                  <td>{category.name}</td>
-                </tr>
+                <CategoryRow category={category} updateCategory={this.props.updateCategory} deleteCategory={this.props.deleteCategory}/>
+                // <tr key={category.id}>
+                //   <td>{category.id}</td>
+                //   <td>{category.name}</td>
+                //   <td>
+                //     <div className="d-flex justify-content-around">
+                //       <FaEdit onClick={this.handleEditMode}/>
+                //       <FaRegTrashAlt/>
+                //     </div>
+                //   </td>
+                // </tr>
               )
             })}
           </tbody>
