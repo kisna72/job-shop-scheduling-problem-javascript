@@ -2,7 +2,7 @@ import React from 'react';
 import MainAppNavBar from './mainAppComponents/mainAppNavBar';
 import Machines from './Pages/Machines';
 import Categories from './Pages/Categories';
-import Jobs from './mainAppComponents/Jobs';
+import JobEditor from './Pages/Jobs';
 import Parameters from './mainAppComponents/Parameters';
 import JobSetup from './JobSetup';
 import App from './App';
@@ -24,29 +24,27 @@ class FactoryOptimizationApp extends React.Component {
     this.state = {
       machines: [],
       categories: [],
-      //  activeMenu: 'Machines', // machine or jobs or params or solution
-      // machines: [
-      //   { id: 1, name: 'Water Bottle Expansion', categories:[1,2]},
-      //   { id: 2, name: 'Water Cleaning', categories:[2] }
-      // ],
-      // categories: [
-      //   { id: 1, name: 'Expansion'},
-      //   { id: 2, name: 'Subratcion'}
-      // ],
       jobs: [
         {
           name: 'Spring Water 16oz',
-          jobSequence: [
-            [[1, 20]], //First sub-job runs on machine 1 for 20 time units.
-            [[1, 10], [2, 30]], // Second sub-job can run on machine 1 for time 10, or machine 2 for time 30
-            [[1, 20], [2, 40]] // Third sub-job can run on machine 1 for unit 20, or machine 2 for unit 40
+          operations: [
+            {
+              operationName:'Water Purifying',
+              machineAndTimes: [[1,20]] //First sub-job runs on machine 1 for 20 time units.
+            },
+            {
+              operationName:'Bottle Expansion',
+              machineAndTimes:  [[1, 10], [2, 30]], // Second sub-job can run on machine 1 for time 10, or machine 2 for time 30
+            },
+            {
+              operationName: 'Water Filling',
+              machineAndTimes: [[1, 20], [2, 40]] // Third sub-job can run on machine 1 for unit 20, or machine 2 for unit 40
+            }
           ]
         },
         {
           name: 'Mineral Water 16oz',
-          jobSequence: [
-
-          ]
+          operations: []
         }
       ],
       best_schedule: [],
@@ -162,7 +160,9 @@ class FactoryOptimizationApp extends React.Component {
             />
           </Route>
           <Route path="/jobs">
-            <Jobs />
+            <JobEditor 
+              jobs={this.state.jobs}
+            />
           </Route>
           <Route path="/parameters">
             <Parameters  />
