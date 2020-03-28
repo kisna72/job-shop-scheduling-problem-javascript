@@ -63,7 +63,7 @@ function MachineRow(props){
     <tr key={props.machine.id}>
       <td>{props.machine.id}</td>
       <td>{props.machine.name}</td>
-      <td>{props.machine.categories}</td>
+      <td>{props.machine.categories.reduce( (prev, cur, idx) => `${prev} ${idx === 0 ? '': ','} ${categoryOptionsMap.get(cur).name}`,'')}</td>
       <td>
           <div className="d-flex justify-content-around">
             <FaEdit onClick={handleEditIconClick}/>
