@@ -24,11 +24,12 @@ class FactoryOptimizationApp extends React.Component {
     this.state = {
       activeMenu: 'Machines', // machine or jobs or params or solution
       machines: [
-        { id: 1, name: 'Water Bottle Expansion'},
-        { id: 2, name: 'Water Cleaning' }
+        { id: 1, name: 'Water Bottle Expansion', categories:[1,2]},
+        { id: 2, name: 'Water Cleaning', categories:[2] }
       ],
       categories: [
-        { id: 1, name: 'Expansion', machines:[]}
+        { id: 1, name: 'Expansion'},
+        { id: 2, name: 'Subratcion'}
       ],
       jobs: [
         {

@@ -78,7 +78,6 @@ class Categories extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault()
     this.props.createCategory({
-      id:2,
       name:this.state.name,
       machines:[]
     })
@@ -88,8 +87,7 @@ class Categories extends React.Component {
   }
   render() {
     return (
-      <div className="machines-wrapper__categories ml-3 kr-card">
-
+      <div className="machines-wrapper__categories kr-card">
         <h3>Categories</h3>
         <table className="table">
           <thead>
@@ -102,23 +100,11 @@ class Categories extends React.Component {
             }
           </thead>
           <tbody>
-            {this.props.categories.map(category => {
-              return (
-                <CategoryRow category={category} updateCategory={this.props.updateCategory} deleteCategory={this.props.deleteCategory}/>
-                // <tr key={category.id}>
-                //   <td>{category.id}</td>
-                //   <td>{category.name}</td>
-                //   <td>
-                //     <div className="d-flex justify-content-around">
-                //       <FaEdit onClick={this.handleEditMode}/>
-                //       <FaRegTrashAlt/>
-                //     </div>
-                //   </td>
-                // </tr>
-              )
-            })}
+            {this.props.categories.map(category => <CategoryRow category={category} updateCategory={this.props.updateCategory} deleteCategory={this.props.deleteCategory}/>)}
           </tbody>
         </table>
+        <div className="kr-card">
+
         <p className="machines-wrapper__categories--intro">
           Please Enter a new category below. Once saved,
           the categories will appear as a selection option
@@ -132,9 +118,10 @@ class Categories extends React.Component {
             onChange={this.handleChange}
             label="Enter new category"
             smallLabel="You will be able to apply each category to multiple machines"
-          />
+            />
           <button type="submit" className="btn btn-primary" disabled={this.state.name === ""}>Add Category</button>
         </form>
+        </div>
       </div>
     )
   }
