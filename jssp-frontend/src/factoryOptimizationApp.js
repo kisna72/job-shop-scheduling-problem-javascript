@@ -22,15 +22,17 @@ class FactoryOptimizationApp extends React.Component {
     super(props)
     // Hold all the state here.
     this.state = {
-      activeMenu: 'Machines', // machine or jobs or params or solution
-      machines: [
-        { id: 1, name: 'Water Bottle Expansion', categories:[1,2]},
-        { id: 2, name: 'Water Cleaning', categories:[2] }
-      ],
-      categories: [
-        { id: 1, name: 'Expansion'},
-        { id: 2, name: 'Subratcion'}
-      ],
+      machines: [],
+      categories: [],
+      //  activeMenu: 'Machines', // machine or jobs or params or solution
+      // machines: [
+      //   { id: 1, name: 'Water Bottle Expansion', categories:[1,2]},
+      //   { id: 2, name: 'Water Cleaning', categories:[2] }
+      // ],
+      // categories: [
+      //   { id: 1, name: 'Expansion'},
+      //   { id: 2, name: 'Subratcion'}
+      // ],
       jobs: [
         {
           name: 'Spring Water 16oz',
@@ -51,6 +53,21 @@ class FactoryOptimizationApp extends React.Component {
       makeSpan: 150
     }
   }
+
+  componentDidMount(){
+    const machines = JSON.parse(localStorage.getItem("machines") || "[]" );
+    const categories = JSON.parse(localStorage.getItem("categories") || "[]");
+    this.setState({
+      machines,
+      categories
+    })
+  }
+  componentDidUpdate(){
+    localStorage.setItem('machines', JSON.stringify(this.state.machines) )
+    localStorage.setItem('categories', JSON.stringify(this.state.categories) )
+  }
+
+
   handleNavBarClick = (choosenMenu) => {
     this.setState({
       activeMenu:choosenMenu
