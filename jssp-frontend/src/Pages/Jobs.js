@@ -5,27 +5,25 @@ import React from "react";
  * @param {{operationName:string, machineAndTimes:[[id:number,time:number]]}} props 
  */
 function JobOperation(props) {
-  return(
+  return (
     <div className="kr-card">
       <h5>{props.operationName}</h5>
-      <p>
-        <table>
-          <thead>
-            <tr>
-              <th>Machine Id</th>
-              <th>Time</th>
+      <table>
+        <thead>
+          <tr>
+            <th>Machine Id</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.machineAndTimes.map( (mt, idx) => {
+            return <tr key={idx}>
+              <td>{mt[0]}</td>
+              <td>{mt[1]}</td>
             </tr>
-          </thead>
-          <tbody>
-            {props.machineAndTimes.map(mt => {
-              return <tr>
-                <td>{mt[0]}</td>
-                <td>{mt[1]}</td>
-              </tr>
-            })}
-          </tbody>
-        </table>
-      </p>
+          })}
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -38,14 +36,19 @@ function Job(props) {
   return (
     <div className="kr-card mb-3">
       <h3>{props.name}</h3>
+      <div className="d-flex align-items-center align-self-center">
       {props.operations.map(js => 
-        <JobOperation 
-          operationName={js.operationName} 
-          machineAndTimes={js.machineAndTimes} 
-        />
+        <div key={js.operationName}>
+          <JobOperation
+            key={js.operationName} 
+            operationName={js.operationName} 
+            machineAndTimes={js.machineAndTimes} 
+          />
+          <div> -> </div>
+        </div>
       )}
-    </div>
-  )
+      </div>
+    </div>)
 }
 
 /**
@@ -56,10 +59,7 @@ function JobEditor(props) {
   return (
     <div>
       <h3>All your SKUs are below</h3>
-      {
-        props.jobs.map(jobDef => <Job name={jobDef.name} operations={jobDef.operations} />)
-      }
-
+      { props.jobs.map(jobDef => <Job key={jobDef.name} name={jobDef.name} operations={jobDef.operations} />) }
     </div>
   )
 }
