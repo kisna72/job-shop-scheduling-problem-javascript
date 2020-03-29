@@ -119,7 +119,10 @@ class FactoryOptimizationApp extends React.Component {
    * CRUD Operations for Jobs
    */
   createJob = (job) => {
-    console.log("create job")
+    console.log("new job ", job)
+    this.setState({
+      jobs: [...this.state.jobs, job]
+    })
   }
 
 
@@ -144,23 +147,32 @@ class FactoryOptimizationApp extends React.Component {
         </nav>
         <Switch>
           <Route path="/" exact={true}>
-            <Categories
-              categories={this.state.categories}
-              machines={this.state.machines}
-              createCategory={this.createCategory}
-              updateCategory={this.updateCategory}
-              deleteCategory={this.deleteCategory}
-            />
-            <Machines 
-              createMachine={this.createMachine} 
-              updateMachine={this.updateMachine} 
-              deleteMachine={this.deleteMachine}
-              machines={this.state.machines}
-              categories={this.state.categories}
-            />
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col-sm-8">
+                  <Machines 
+                    createMachine={this.createMachine} 
+                    updateMachine={this.updateMachine} 
+                    deleteMachine={this.deleteMachine}
+                    machines={this.state.machines}
+                    categories={this.state.categories}
+                    />
+                </div>
+                <div className="col-sm-4">
+                  <Categories
+                  categories={this.state.categories}
+                  machines={this.state.machines}
+                  createCategory={this.createCategory}
+                  updateCategory={this.updateCategory}
+                  deleteCategory={this.deleteCategory}
+                  />
+                </div>
+              </div>
+            </div>
           </Route>
           <Route path="/jobs">
             <JobEditor 
+              createJob={this.createJob}
               jobs={this.state.jobs}
             />
           </Route>
