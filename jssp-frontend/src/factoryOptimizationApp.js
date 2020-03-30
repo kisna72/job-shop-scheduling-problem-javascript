@@ -30,14 +30,17 @@ class FactoryOptimizationApp extends React.Component {
           name: 'Spring Water 16oz',
           operations: [
             {
+              id:1,
               operationName:'Water Purifying',
               machineAndTimes: [[1,20]] //First sub-job runs on machine 1 for 20 time units.
             },
             {
+              id:2,
               operationName:'Bottle Expansion',
               machineAndTimes:  [[1, 10], [2, 30]], // Second sub-job can run on machine 1 for time 10, or machine 2 for time 30
             },
             {
+              id:3,
               operationName: 'Water Filling',
               machineAndTimes: [[1, 20], [2, 40]] // Third sub-job can run on machine 1 for unit 20, or machine 2 for unit 40
             }

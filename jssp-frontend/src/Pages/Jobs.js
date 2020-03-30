@@ -4,15 +4,18 @@ import { FaRegTrashAlt, FaEdit  } from 'react-icons/fa';
 
 /**
  * Display a Job Operation
- * @param {{operationName:string, machineAndTimes:[[id:number,time:number]]}} props 
+ * @param {{id:number, operationName:string, machineAndTimes:[[id:number,time:number]], machines:[], addMachineTime:function }} props 
  */
 function JobOperation(props) {
   const [addingMachine, setAddingMachine]= useState(false);
-  const [selectedMachine, setSelectedMachine] = useState(null);
+  const [selectedMachine, setSelectedMachine] = useState(undefined);
   const [machineTime, setMachineTime] = useState(0);
   
   const handleSubmit = (event) => {
     event.preventDefault();
+    const newMachineTime = [selectedMachine, machineTime]
+
+    props.addMachineTime(props.id, newMachineTime)
   }
   const handleEditIconClick = () => {}
   const handleDeleteIconClick = () => {}
@@ -74,6 +77,7 @@ function Job({id, name,operations,updateJob, machines}) {
       id: id,
       name: name,
       operations: [...operations, {
+        id: operations.reduce( (prev, cur) => cur.id <= prev ? prev : cur.id+1 , 1),
         operationName:newOperationName,
         machineAndTimes:[]
       }]
@@ -83,8 +87,17 @@ function Job({id, name,operations,updateJob, machines}) {
     setAddingNew(false);  
   }
 
-  const addMachineTime = (newMachineTime) => {
-    
+  const addMachineTime = (operationId, newMachineTime) => {
+    const updatedOperations = operations.map(op => op.id === operationId ? {
+      ...op,
+      machineAndTimes: op.machineAndTimes.push(newMachineTime)
+    } : op)
+    const jobWithNewMachineTime = {
+      id: operationId,
+      name: name,
+      operations: updatedOperations
+    }
+    updateJob(jobWithNewMachineTime);
   }
   return (
     <div className="kr-card mb-3">
@@ -93,10 +106,12 @@ function Job({id, name,operations,updateJob, machines}) {
       {operations.map(js => 
         <>
           <JobOperation
+            id={js.id}
             key={js.operationName} 
             operationName={js.operationName} 
             machineAndTimes={js.machineAndTimes}
             machines={machines}
+            addMachineTime={addMachineTime}
           />
           <div className="p-3"> -> </div>
         </>
