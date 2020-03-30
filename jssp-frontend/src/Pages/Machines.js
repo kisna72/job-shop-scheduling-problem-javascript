@@ -107,7 +107,7 @@ class Machines extends React.Component {
   }
   render(){
     return (
-    <div className="kr-card">
+    <div className="kr-card1">
         <h3>Machines</h3>
         <table className="table">
           <thead>

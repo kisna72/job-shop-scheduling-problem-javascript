@@ -1,11 +1,22 @@
 import React, { useState } from "react";
 import { TextInput } from '../sharedComponents/react/Input';
+import { FaRegTrashAlt, FaEdit  } from 'react-icons/fa';
 
 /**
  * Display a Job Operation
  * @param {{operationName:string, machineAndTimes:[[id:number,time:number]]}} props 
  */
 function JobOperation(props) {
+  const [addingMachine, setAddingMachine]= useState(false);
+  const [selectedMachine, setSelectedMachine] = useState(null);
+  const [machineTime, setMachineTime] = useState(0);
+  
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  }
+  const handleEditIconClick = () => {}
+  const handleDeleteIconClick = () => {}
+
   return (
     <div className="kr-card">
       <h5>{props.operationName}</h5>
@@ -22,35 +33,70 @@ function JobOperation(props) {
             return <tr key={idx}>
               <td>{mt[0]}</td>
               <td>{mt[1]}</td>
-              <td></td>
+              <td>
+                <div className="d-flex justify-content-around">
+                  <FaEdit onClick={handleEditIconClick}/>
+                  <FaRegTrashAlt onClick={handleDeleteIconClick}/>
+                </div>
+              </td>
             </tr>
           })}
-
         </tbody>
       </table>
+      {addingMachine ? 
+        <form onSubmit={handleSubmit}>
+          <select className="form-control" onChange={(event) => setSelectedMachine(event.target.value)} value={selectedMachine}>
+            {props.machines.map( m => <option value={m.id}>{m.name}</option> )}
+          </select>
+          <input className="form-control" placeholder="enter time" value={machineTime} onChange={(event)=>setMachineTime(event.target.value)}></input>
+          <button>Submit</button>
+          <button onClick={() => setAddingMachine(false)} className="button btn-primary mt-1">Cancel</button>
+        </form>
+      
+      : <button onClick={() => setAddingMachine(true)} className="button btn-primary mt-1">Add New Machine Option</button>
+      }
     </div>
   )
 }
 
 /**
  * Display a Job.
- * @param {{name:string, operations:[ [machineid:number,time:string] ] , machineMap }} props 
+ * @param {{id:number, name:string, operations:[ [machineid:number,time:string] ] , updateJob:function, machines }} props 
  */
-function Job({name,operations,machineMap}) {
+function Job({id, name,operations,updateJob, machines}) {
   const [newOperationName, setNewOperationName] = useState('');
   const [addingNew, setAddingNew] = useState(false)
-  const handleChange = () => {}
-  const handleSubmit = () => {}
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    // Add Operation to the Job, and send a update
+    const jobWithNewOperations = {
+      id: id,
+      name: name,
+      operations: [...operations, {
+        operationName:newOperationName,
+        machineAndTimes:[]
+      }]
+    }
+    updateJob(jobWithNewOperations);
+    setNewOperationName('');
+    setAddingNew(false);  
+  }
+
+  const addMachineTime = (newMachineTime) => {
+    
+  }
   return (
     <div className="kr-card mb-3">
       <h3>{name}</h3>
-      <div className="d-flex align-items-center align-self-center">
+      <div className="d-flex flex-wrap align-items-center align-self-center">
       {operations.map(js => 
         <>
           <JobOperation
             key={js.operationName} 
             operationName={js.operationName} 
-            machineAndTimes={js.machineAndTimes} 
+            machineAndTimes={js.machineAndTimes}
+            machines={machines}
           />
           <div className="p-3"> -> </div>
         </>
@@ -60,11 +106,11 @@ function Job({name,operations,machineMap}) {
           <TextInput
             id="job-new-input"
             value={newOperationName}
-            onChange={handleChange}
-            label="Enter new Job (new SKU)"
-            smallLabel="You will be able to add operations for each job after creating it"
+            onChange={(event) => setNewOperationName(event.target.value)}
+            label="Enter new Operation"
+            smallLabel="You will be able to add possible machines after adding an operation"
             />
-          <button type="submit" className="btn btn-primary" disabled={newOperationName === ""}>Add new Job</button>
+          <button type="submit" className="btn btn-primary" disabled={newOperationName === ""}>Add new Operation</button>
           <button className="btn btn-warning ml-1" onClick={() => setAddingNew(false)}>Cancel</button>
         </form>
         : <button className="btn btn-primary" onClick={() => setAddingNew(true)}>Add Operation </button>
@@ -97,7 +143,7 @@ function JobEditor(props) {
   return (
     <div className="m-5">
       <h3>See SKUs below</h3>
-      { props.jobs.map(jobDef => <Job key={jobDef.name} name={jobDef.name} operations={jobDef.operations} />) }
+      { props.jobs.map(jobDef => <Job key={jobDef.name} id={jobDef.id} name={jobDef.name} operations={jobDef.operations} updateJob={props.updateJob} machines={props.machines} />) }
       <form className="kr-card" onSubmit={handleSubmit}>
           <TextInput
             id="job-new-input"
@@ -105,7 +151,7 @@ function JobEditor(props) {
             onChange={handleChange}
             label="Enter new Job (new SKU)"
             smallLabel="You will be able to add operations for each job after creating it"
-            />
+          />
           <button type="submit" className="btn btn-primary" disabled={newJobName === ""}>Add new Job</button>
         </form>
     </div>

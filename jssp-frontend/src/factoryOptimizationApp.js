@@ -26,6 +26,7 @@ class FactoryOptimizationApp extends React.Component {
       categories: [],
       jobs: [
         {
+          id:1,
           name: 'Spring Water 16oz',
           operations: [
             {
@@ -43,6 +44,7 @@ class FactoryOptimizationApp extends React.Component {
           ]
         },
         {
+          id:6,
           name: 'Mineral Water 16oz',
           operations: []
         }
@@ -120,8 +122,19 @@ class FactoryOptimizationApp extends React.Component {
    */
   createJob = (job) => {
     console.log("new job ", job)
+    job.id = this.state.jobs.reduce( (prev, curr) => curr.id >= prev ? curr.id+1 : prev, 1)
     this.setState({
       jobs: [...this.state.jobs, job]
+    })
+  }
+  updateJob = (job) => {
+    this.setState({
+      jobs: this.state.jobs.map(j => j.id === job.id ? job : j )
+    })
+  }
+  deleteJob = (job) => {
+    this.setState({
+      jobs: this.state.jobs.filter(j => j.id !== job.id)
     })
   }
 
@@ -173,7 +186,10 @@ class FactoryOptimizationApp extends React.Component {
           <Route path="/jobs">
             <JobEditor 
               createJob={this.createJob}
+              updateJob={this.updateJob}
+              deleteJob={this.deleteJob}
               jobs={this.state.jobs}
+              machines={this.state.machines}
             />
           </Route>
           <Route path="/parameters">

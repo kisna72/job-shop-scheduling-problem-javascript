@@ -87,8 +87,8 @@ class Categories extends React.Component {
   }
   render() {
     return (
-      <div className="machines-wrapper__categories kr-card">
-        <h3>Categories</h3>
+      <div className="machines-wrapper__categories kr-card2">
+        <h3>Tags</h3>
         <table className="table">
           <thead>
             {this.props.categories.length > 0 && 
@@ -106,10 +106,10 @@ class Categories extends React.Component {
         <div className="kr-card">
 
         <p className="machines-wrapper__categories--intro">
-          Please Enter a new category below. Once saved,
-          the categories will appear as a selection option
+          Please Enter a new tag below. Once saved,
+          the tags will appear as a selection option
           in each machine. You'll have to individually apply
-          new categories to existing machines.
+          new tags to existing machines.
         </p>
         <form onSubmit={this.handleSubmit}>
           <TextInput
