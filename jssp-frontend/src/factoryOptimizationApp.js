@@ -60,14 +60,17 @@ class FactoryOptimizationApp extends React.Component {
   componentDidMount(){
     const machines = JSON.parse(localStorage.getItem("machines") || "[]" );
     const categories = JSON.parse(localStorage.getItem("categories") || "[]");
+    const jobs = JSON.parse(localStorage.getItem("jobs") || "[]");
     this.setState({
       machines,
-      categories
+      categories,
+      jobs
     })
   }
   componentDidUpdate(){
     localStorage.setItem('machines', JSON.stringify(this.state.machines) )
     localStorage.setItem('categories', JSON.stringify(this.state.categories) )
+    localStorage.setItem('jobs', JSON.stringify(this.state.jobs) )
   }
 
 
