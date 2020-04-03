@@ -176,11 +176,11 @@ class FactoryOptimizationApp extends React.Component {
                 </div>
                 <div className="col-sm-4">
                   <Categories
-                  categories={this.state.categories}
-                  machines={this.state.machines}
-                  createCategory={this.createCategory}
-                  updateCategory={this.updateCategory}
-                  deleteCategory={this.deleteCategory}
+                    categories={this.state.categories}
+                    machines={this.state.machines}
+                    createCategory={this.createCategory}
+                    updateCategory={this.updateCategory}
+                    deleteCategory={this.deleteCategory}
                   />
                 </div>
               </div>

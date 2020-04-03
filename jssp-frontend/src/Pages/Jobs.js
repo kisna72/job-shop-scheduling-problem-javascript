@@ -1,24 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextInput } from '../sharedComponents/react/Input';
 import { FaRegTrashAlt, FaEdit  } from 'react-icons/fa';
 
 /**
  * Display a Job Operation
- * @param {{id:number, operationName:string, machineAndTimes:[[id:number,time:number]], machines:[], addMachineTime:function }} props 
+ * @param {{id:number, operationName:string, machineAndTimes:[[id:number,time:number]], machines:[], updateOperation:function }} props 
  */
 function JobOperation(props) {
   const [addingMachine, setAddingMachine]= useState(false);
-  const [selectedMachine, setSelectedMachine] = useState(undefined);
+  const [selectedMachine, setSelectedMachine] = useState(props.machines.length > 0 ? props.machines[0].id  : undefined);
   const [machineTime, setMachineTime] = useState(0);
+
+  useEffect(() => {
+    const initialMachineSelection = props.machines.length > 0 ? props.machines[0].id  : undefined
+    setSelectedMachine(initialMachineSelection)
+  }, [props.machines])
   
   const handleSubmit = (event) => {
     event.preventDefault();
     const newMachineTime = [selectedMachine, machineTime]
-
-    props.addMachineTime(props.id, newMachineTime)
+    const {machines, updateOperation, ...op} = props
+    const updatedOperation = {
+      ...op,
+      machineAndTimes:[...props.machineAndTimes, newMachineTime]
+    }
+    updateOperation(updatedOperation);
+    setMachineTime(0);
+    setAddingMachine(false);
   }
-  const handleEditIconClick = () => {}
-  const handleDeleteIconClick = () => {}
+  
+  const handleDeleteIconClick = (idx) => {
+    console.log("deleting ", idx)
+    const newMachineAndTimes = props.machineAndTimes.filter( (v, i) => i !== idx)
+    const {machines, updateOperation, ...op} = props
+    const updatedOperation = {
+      ...op,
+      machineAndTimes:newMachineAndTimes
+    }
+    updateOperation(updatedOperation);
+  }
 
   return (
     <div className="kr-card">
@@ -32,14 +52,14 @@ function JobOperation(props) {
           </tr>
         </thead>
         <tbody>
-          {props.machineAndTimes.map( (mt, idx) => {
+          {props.machineAndTimes.map( (mt, idx, arr) => {
             return <tr key={idx}>
               <td>{mt[0]}</td>
               <td>{mt[1]}</td>
               <td>
                 <div className="d-flex justify-content-around">
-                  <FaEdit onClick={handleEditIconClick}/>
-                  <FaRegTrashAlt onClick={handleDeleteIconClick}/>
+                  {/* <FaEdit onClick={handleEditIconClick}/> */}
+                  <FaRegTrashAlt onClick={() => handleDeleteIconClick(idx) }/>
                 </div>
               </td>
             </tr>
@@ -66,7 +86,9 @@ function JobOperation(props) {
  * Display a Job.
  * @param {{id:number, name:string, operations:[ [machineid:number,time:string] ] , updateJob:function, machines }} props 
  */
-function Job({id, name,operations,updateJob, machines}) {
+function Job(props) {
+  const {id, name,operations,updateJob,machines} = props;
+
   const [newOperationName, setNewOperationName] = useState('');
   const [addingNew, setAddingNew] = useState(false)
 
@@ -77,7 +99,7 @@ function Job({id, name,operations,updateJob, machines}) {
       id: id,
       name: name,
       operations: [...operations, {
-        id: operations.reduce( (prev, cur) => cur.id <= prev ? prev : cur.id+1 , 1),
+        id: operations.reduce( (prev, cur) => cur.id <= prev ? prev+1 : cur.id+1 , 1),
         operationName:newOperationName,
         machineAndTimes:[]
       }]
@@ -87,17 +109,15 @@ function Job({id, name,operations,updateJob, machines}) {
     setAddingNew(false);  
   }
 
-  const addMachineTime = (operationId, newMachineTime) => {
-    const updatedOperations = operations.map(op => op.id === operationId ? {
-      ...op,
-      machineAndTimes: op.machineAndTimes.push(newMachineTime)
-    } : op)
-    const jobWithNewMachineTime = {
-      id: operationId,
-      name: name,
-      operations: updatedOperations
+  const updateOperation = (operation) => {
+    // Create a new copy of operation here.
+    const newOperations = operations.map( op => op.id === operation.id ? operation : op)
+    const {machines, updateJob, ...oldJob} = props
+    const jobWithUpdatedOperation = {
+      ...oldJob,
+      operations:newOperations
     }
-    updateJob(jobWithNewMachineTime);
+    updateJob(jobWithUpdatedOperation);
   }
   return (
     <div className="kr-card mb-3">
@@ -111,7 +131,7 @@ function Job({id, name,operations,updateJob, machines}) {
             operationName={js.operationName} 
             machineAndTimes={js.machineAndTimes}
             machines={machines}
-            addMachineTime={addMachineTime}
+            updateOperation={updateOperation}
           />
           <div className="p-3"> -> </div>
         </>
