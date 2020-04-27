@@ -4,6 +4,7 @@ import Machines from './Pages/Machines';
 import Categories from './Pages/Categories';
 import JobEditor from './Pages/Jobs';
 import Parameters from './mainAppComponents/Parameters';
+import { JSSPProblemInstance } from './JSSP';
 import JobSetup from './JobSetup';
 import App from './App';
 import {
@@ -24,34 +25,7 @@ class FactoryOptimizationApp extends React.Component {
     this.state = {
       machines: [],
       categories: [],
-      jobs: [
-        {
-          id:1,
-          name: 'Spring Water 16oz',
-          operations: [
-            {
-              id:1,
-              operationName:'Water Purifying',
-              machineAndTimes: [[1,20]] //First sub-job runs on machine 1 for 20 time units.
-            },
-            {
-              id:2,
-              operationName:'Bottle Expansion',
-              machineAndTimes:  [[1, 10], [2, 30]], // Second sub-job can run on machine 1 for time 10, or machine 2 for time 30
-            },
-            {
-              id:3,
-              operationName: 'Water Filling',
-              machineAndTimes: [[1, 20], [2, 40]] // Third sub-job can run on machine 1 for unit 20, or machine 2 for unit 40
-            }
-          ]
-        },
-        {
-          id:6,
-          name: 'Mineral Water 16oz',
-          operations: []
-        }
-      ],
+      jobs: [],
       best_schedule: [],
       makeSpan: 150
     }
@@ -202,7 +176,10 @@ class FactoryOptimizationApp extends React.Component {
             <Parameters  />
           </Route>
           <Route path="/solution">
-            <App/>
+            <App
+              jobs={this.state.jobs}
+              machines={this.state.machines}
+            />
           </Route>
         </Switch>
       </Router>

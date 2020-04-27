@@ -41,7 +41,7 @@ function JobOperation(props) {
   }
 
   return (
-    <div className="kr-card">
+    <div className="kr-card mb-2">
       <h5>{props.operationName}</h5>
       <table className="table table-sm">
         <thead>
