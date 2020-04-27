@@ -351,11 +351,12 @@ const workercode = () => {
                     postMessage("Got New MakeSpan")
                     const returnData = {
                         'type':'newSchedule',
-                        'schedule':[[]],
+                        'schedule':bestGanttChart,
                         'makeSpan':makespan,
                         "minMakeSpanDetectedIteration": currentSimCount
                     }
                     postMessage(returnData);
+                    sleep(1000) // Allow time for UI to update
                 }
                 if (this.algorithm === JobShopAlgorithmEnum.HILL_CLIMBING_WITH_RESTARTS) {
                     if (makespan < this.bestMakeSpanLocal) {

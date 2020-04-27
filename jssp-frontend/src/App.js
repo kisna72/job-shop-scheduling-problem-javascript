@@ -105,8 +105,14 @@ class App extends React.Component {
         })
       }
       else if(e.data && e.data.type === "newSchedule"){
+        const schedule = []
+        e.data.schedule.forEach((value, key) => {
+          console.log(value)
+          schedule.push(value)
+        })
         this.setState({
-          schedule : e.data.schedule, makeSpan:e.data.makeSpan,
+          schedule : schedule, 
+          makeSpan:e.data.makeSpan,
           minMakeSpanDetectedIteration: e.data.minMakeSpanDetectedIteration
         });
       } else {
