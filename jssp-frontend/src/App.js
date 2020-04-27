@@ -7,10 +7,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { JSSPProblemInstance } from './JSSP';
 import { NavBar } from './components/navbar';
 import TwoDPlot from './TwoDPlot';
+import  { jobObjectToArrayOfArray, generateProblemInstance } from './JSSP';
 
 // Create a new instance of JSSPProblemInstance and assign jobs for water bottle plant.
 
-const problem = new JSSPProblemInstance(5,6) // Instantiate with no data. j jobs and m machines.
+const problemStatic = new JSSPProblemInstance(5,6) // Instantiate with no data. j jobs and m machines.
 /**
  * Water Bottoling Plant that does 4 different types of water bottles. 
  * Job 0 - Spring Water 16oz
@@ -26,8 +27,8 @@ const problem = new JSSPProblemInstance(5,6) // Instantiate with no data. j jobs
  * Machine 4 - Labelling
  * 
  * Jobs must be run in the following order
- */
-problem.jobs = [
+//  */
+problemStatic.jobs = [
   // Read it as follows:
   // first job -> first step can run on 2 machines. Machine 0 for time 10 OR Machine 5 for time 20, next it runs on 1 machine - machine 1 for time 10 etc.
   [2, 0, 10, 5, 20, 1, 1, 10, 1, 2, 10, 1, 3, 10, 1, 4, 8, 1, 4, 10, 1, 4, 10],
@@ -39,8 +40,8 @@ problem.jobs = [
 ]
 
 // Infer number of machines the job needs to run based on job definition.
-problem.numMachineByJobs = []
-problem.jobs.forEach(jobDefArr => {
+problemStatic.numMachineByJobs = []
+problemStatic.jobs.forEach(jobDefArr => {
   let numMachines = 0
   let nextIndexToCheck = 0;
   for(let i = 0; i < jobDefArr.length; i++ ){
@@ -49,7 +50,7 @@ problem.jobs.forEach(jobDefArr => {
       nextIndexToCheck = i + jobDefArr[i]*2 + 1
     }
   }
-  problem.numMachineByJobs.push(numMachines)
+  problemStatic.numMachineByJobs.push(numMachines)
 })
 // Example Problem Statement
 // problem.jobs = [ 
@@ -84,9 +85,9 @@ class App extends React.Component {
       iterations:0,
       workerInstance : new Worker(WebWorkerScript),
       makeSpanHistory:[],
-      maxAlgorithmRepetition:50,
+      maxAlgorithmRepetition:10000,
       algorithmMaxTimeSecs:30,
-      algorithmType: 'hillClimbing' // random || hillClimbing
+      algorithmType: 'hillClimbingRestarts' // random || hillClimbing || hillClimbingRestarts
     }
   }
   startJobShopWorker = () => {
@@ -113,11 +114,15 @@ class App extends React.Component {
       } 
     }, false);
     
+    const problem = generateProblemInstance(this.props.jobs, this.props.machines);
+    // const problem = problemStatic // OLD 
     workerInstance.postMessage({
       algorithmRepetition:this.state.maxAlgorithmRepetition,
       problem:problem,
       algorithmMaxTimeSecs:this.state.algorithmMaxTimeSecs,
-      algorithmType: this.state.algorithmType
+      algorithmType: this.state.algorithmType,
+      machines: this.props.machines, 
+      jobs: this.props.jobs
     })
 
     this.setState({
@@ -127,6 +132,16 @@ class App extends React.Component {
 
   componentDidMount(){
     this.startJobShopWorker()
+  }
+  componentDidUpdate(prevProps, prevState, snapshot){
+    if( (prevProps.jobs !== this.props.jobs) || (prevProps.machines !== this.props.machines) ){
+      console.log("props changed, so restarting the simulation")
+      this.state.workerInstance.terminate();
+      this.startJobShopWorker()
+    }
+  }
+  componentWillUnmount(){
+    this.state.workerInstance.terminate();
   }
   handleChange = (event)=>{
     this.setState({[event.target.name]: event.target.value});
@@ -156,6 +171,7 @@ class App extends React.Component {
             <select className="form-control ml-2" name="algorithmType" onChange={this.handleChange} value={this.state.algorithmType}>
               <option value="random">Random Search</option>
               <option value="hillClimbing">Hill Climbing Search</option>
+              <option value="hillClimbingRestarts">Hill Climbing With Restarts</option>
             </select>
           </li> 
 

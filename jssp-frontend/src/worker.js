@@ -72,8 +72,8 @@ const workercode = () => {
          * @param name
          * @param tags
          */
-        JobShopProblem.prototype.addMachine = function (name, tags) {
-            var id = Array.from(this.resources.keys()).reduce(function (prev, curr) { return curr >= prev ? curr + 1 : prev; }, 0);
+        JobShopProblem.prototype.addMachine = function (name,id,tags) {
+            id = id ? id : Array.from(this.resources.keys()).reduce(function (prev, curr) { return curr >= prev ? curr + 1 : prev; }, 0);
             var machine = __assign({ id: id, name: name, type: ResourceTypeEnum.MACHINE }, (tags && { tags: tags }));
             this.resources.set(id, machine);
             return id;
@@ -312,13 +312,14 @@ const workercode = () => {
             }
             return funcs;
         };
-        JobShopProblem.prototype.solve = function () {
+        JobShopProblem.prototype.solve = function (postMessage) {
             console.log("solving");
             var currentSimCount = 0;
             var terminateNow;
             var bestGanttChart;
             var bestMakeSpan = +Infinity;
             var bestMakeSpanIndex = 0;
+            var makeSpanHistory = [];
             var defaultTerminationArgs = {
                 currentSimulationIndex: currentSimCount,
                 simulationStartTime: new Date(),
@@ -332,9 +333,10 @@ const workercode = () => {
                 var terminatedList = this.terminationCriteriaFuncs.map(function (f) { return f(defaultTerminationArgs); });
                 terminateNow = terminatedList.reduce(function (prev, curr) { return curr ? true : prev; }, false);
                 // print to screen every so often
-                if (currentSimCount % 10) {
-                    process.stdout.write("Running simulation " + currentSimCount + " of " + this.maxNumberOfSimulations + ". RS " + this.totalRestarts + " Best MakeSpan so far " + bestMakeSpan + " on simulation number " + bestMakeSpanIndex + " \r");
-                }
+                // if (currentSimCount % 10) {
+                //     process.stdout.write("Running simulation " + currentSimCount + " of " + this.maxNumberOfSimulations + ". RS " + this.totalRestarts + " Best MakeSpan so far " + bestMakeSpan + " on simulation number " + bestMakeSpanIndex + " \r");
+                // }
+
                 var oned = this.onedArrayOfJobs();
                 var ganttChart = this.oneDToGanttChart(oned);
                 var makespan = this.costFunction(ganttChart);
@@ -345,6 +347,15 @@ const workercode = () => {
                     bestGanttChart = ganttChart;
                     this.best1Dsolution = oned;
                     bestMakeSpanIndex = currentSimCount;
+
+                    postMessage("Got New MakeSpan")
+                    const returnData = {
+                        'type':'newSchedule',
+                        'schedule':[[]],
+                        'makeSpan':makespan,
+                        "minMakeSpanDetectedIteration": currentSimCount
+                    }
+                    postMessage(returnData);
                 }
                 if (this.algorithm === JobShopAlgorithmEnum.HILL_CLIMBING_WITH_RESTARTS) {
                     if (makespan < this.bestMakeSpanLocal) {
@@ -354,6 +365,44 @@ const workercode = () => {
                     }
                 }
                 currentSimCount += 1;
+
+                /**
+                 * CODE FOR LOGGING TO THE UI 
+                 */
+                let newMakeSpanToPushToUI;
+                switch (this.algorithm) {
+                    case JobShopAlgorithmEnum.RANDOM:
+                        newMakeSpanToPushToUI = makespan
+                        break;
+                    case JobShopAlgorithmEnum.HILL_CLIMBING:
+                        newMakeSpanToPushToUI = bestMakeSpan
+                        break;
+                    case JobShopAlgorithmEnum.HILL_CLIMBING_WITH_RESTARTS:
+                        newMakeSpanToPushToUI = this.bestMakeSpanLocal
+                        break;
+                    default:
+                        newMakeSpanToPushToUI = makespan
+                }
+                makeSpanHistory.push(newMakeSpanToPushToUI)
+                if(currentSimCount%100  === 0){
+                    const returnData = {
+                        type:'iterationCount',
+                        iteration:currentSimCount,
+                        newMakeSpan:makeSpanHistory
+                    }
+                    postMessage(returnData);
+                    //sleep(200) // Give UI thread enough time to render this.
+                    makeSpanHistory.length = 0 // delete the array
+                }
+            }
+            // clear one last time ... 
+            if(makeSpanHistory.length > 0 ){
+                const returnData = {
+                    type:'iterationCount',
+                    iteration:currentSimCount,
+                    newMakeSpan:makeSpanHistory
+                }
+                postMessage(returnData);
             }
             console.log("Termination criteria passed");
             console.log("shortest makespan is ", bestMakeSpan);
@@ -598,9 +647,65 @@ const workercode = () => {
 
     onmessage = function(e) {
         const that = this;
-        const { problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType} = e.data; 
-        console.log(problem, algorithmMaxTimeSecs);
-        _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType, that)
+        const { problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType, machines, jobs } = e.data; 
+        // console.log(problem, algorithmMaxTimeSecs);
+        // _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType, that)
+        const jsspSolver = new JobShopProblem();
+
+        machines.forEach((machine, index) => {
+            jsspSolver.addMachine(machine.name, machine.id)
+        })
+        jobs.forEach((job, index) => {
+            const operations = []
+            job.operations.forEach((operation, index) => {
+                if(operation.machineAndTimes.length > 1){
+                    // add complex operation 
+                    const complexOperation = {
+                        type: ComplexOperationTypeEnum.CAN_RUN_IN_MULTIPLE_MACINES,
+                        operations: operation.machineAndTimes.map(mat => {
+                            return {
+                                machine: parseInt(mat[0]),
+                                time: parseInt(mat[1])
+                            }
+                        })
+                    }
+                    operations.push(complexOperation)
+                } else {
+                    // add simple operation
+                    operations.push({
+                        machine: parseInt(operation.machineAndTimes[0][0]),
+                        time: parseInt(operation.machineAndTimes[0][0])
+                    })
+                }
+            })
+            jsspSolver.addJob({
+                id: job.id,
+                name: job.name,
+                operations: operations,
+                requiredInventory: 1
+            })
+        })
+        let algo;
+        if(algorithmType === "random"){
+            algo = JobShopAlgorithmEnum.RANDOM
+        } else if (algorithmType === "hillClimbing"){
+            algo = JobShopAlgorithmEnum.HILL_CLIMBING
+        } else {
+            algo = JobShopAlgorithmEnum.HILL_CLIMBING_WITH_RESTARTS
+        }
+        const solParams = {
+            maxNumberOfSimulations:algorithmRepetition,
+            maxSecondsToRun: algorithmMaxTimeSecs,
+            algorithm: algo,
+            hillClimbingRandomRestartPercent: 0.1, // restart 0.0001 percent of the time. Gives the algorithm enough time to discover a local minima.
+            randomAlgorithm: RandomAlgorithmEnum.FISHERYATES
+            // Smaller than number better chance the algorithm has to discover local minima... important during large 
+        }
+    
+        jsspSolver.setSolutionParameters(solParams)
+        const bestGanttChart = jsspSolver.solve(this.postMessage);
+        console.log("returning bestGanttChart")
+        console.log(bestGanttChart)
         var workerResult = 'Received from main: ' + (e.data);
         this.postMessage(workerResult);
     }
