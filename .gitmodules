@@ -1,0 +1,3 @@
+[submodule "jssp-frontend/src/sharedComponents"]
+	path = jssp-frontend/src/sharedComponents
+	url = git@github.com:kisna72/sharedComponents.git

@@ -7,9 +7,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { JSSPProblemInstance } from './JSSP';
 import { NavBar } from './components/navbar';
 import TwoDPlot from './TwoDPlot';
+import  { jobObjectToArrayOfArray, generateProblemInstance } from './JSSP';
 
 // Create a new instance of JSSPProblemInstance and assign jobs for water bottle plant.
-const problem = new JSSPProblemInstance(4,5) // Instantiate with no data. 
+
+const problemStatic = new JSSPProblemInstance(5,6) // Instantiate with no data. j jobs and m machines.
 /**
  * Water Bottoling Plant that does 4 different types of water bottles. 
  * Job 0 - Spring Water 16oz
@@ -25,14 +27,31 @@ const problem = new JSSPProblemInstance(4,5) // Instantiate with no data.
  * Machine 4 - Labelling
  * 
  * Jobs must be run in the following order
- */
-problem.jobs = [
-  [0, 10, 1, 10, 2, 10, 3, 10, 4, 8],
-  [0, 50, 1, 15, 2, 10, 3, 10, 4, 16],
-  [0, 30, 1, 12, 2, 20, 3, 10, 4, 16],
-  [0, 15, 1, 30, 2, 20, 3, 10, 4, 10],
+//  */
+problemStatic.jobs = [
+  // Read it as follows:
+  // first job -> first step can run on 2 machines. Machine 0 for time 10 OR Machine 5 for time 20, next it runs on 1 machine - machine 1 for time 10 etc.
+  [2, 0, 10, 5, 20, 1, 1, 10, 1, 2, 10, 1, 3, 10, 1, 4, 8, 1, 4, 10, 1, 4, 10],
+  // second Job -> first step can run on 2 machines. Machine 0 for time 50 OR machine 5 for time 30, second step on 1 machine - machine 1 for 15 times
+  [2, 0, 50, 5, 30, 1, 1, 15, 1, 2, 10, 1, 3, 10,],// 1, 4, 16], // Very Very Flexible...
+  [2, 0, 30, 5, 50, 1, 1, 12, 1, 2, 20, 1, 3, 10, 1, 4, 16],
+  [2, 0, 15, 5, 20, 1, 1, 30, 1, 2, 20, 1, 3, 10, 1, 4, 10],
+  [1, 2, 120]
 ]
 
+// Infer number of machines the job needs to run based on job definition.
+problemStatic.numMachineByJobs = []
+problemStatic.jobs.forEach(jobDefArr => {
+  let numMachines = 0
+  let nextIndexToCheck = 0;
+  for(let i = 0; i < jobDefArr.length; i++ ){
+    if(i === nextIndexToCheck){
+      numMachines += 1
+      nextIndexToCheck = i + jobDefArr[i]*2 + 1
+    }
+  }
+  problemStatic.numMachineByJobs.push(numMachines)
+})
 // Example Problem Statement
 // problem.jobs = [ 
 //   [ 0, 10, 1, 20, 2, 20, 3, 40, 4, 10 ],
@@ -66,12 +85,13 @@ class App extends React.Component {
       iterations:0,
       workerInstance : new Worker(WebWorkerScript),
       makeSpanHistory:[],
-      maxAlgorithmRepetition:50,
+      maxAlgorithmRepetition:10000,
       algorithmMaxTimeSecs:30,
-      algorithmType: 'hillClimbing' // random || hillClimbing
+      algorithmType: 'hillClimbingRestarts' // random || hillClimbing || hillClimbingRestarts
     }
   }
   startJobShopWorker = () => {
+    console.log("started worker")
     const workerInstance = new Worker(WebWorkerScript);
     
     workerInstance.addEventListener("message", e => {
@@ -85,8 +105,14 @@ class App extends React.Component {
         })
       }
       else if(e.data && e.data.type === "newSchedule"){
+        const schedule = []
+        e.data.schedule.forEach((value, key) => {
+          console.log(value)
+          schedule.push(value)
+        })
         this.setState({
-          schedule : e.data.schedule, makeSpan:e.data.makeSpan,
+          schedule : schedule, 
+          makeSpan:e.data.makeSpan,
           minMakeSpanDetectedIteration: e.data.minMakeSpanDetectedIteration
         });
       } else {
@@ -94,11 +120,15 @@ class App extends React.Component {
       } 
     }, false);
     
+    const problem = generateProblemInstance(this.props.jobs, this.props.machines);
+    // const problem = problemStatic // OLD 
     workerInstance.postMessage({
       algorithmRepetition:this.state.maxAlgorithmRepetition,
       problem:problem,
       algorithmMaxTimeSecs:this.state.algorithmMaxTimeSecs,
-      algorithmType: this.state.algorithmType
+      algorithmType: this.state.algorithmType,
+      machines: this.props.machines, 
+      jobs: this.props.jobs
     })
 
     this.setState({
@@ -108,6 +138,16 @@ class App extends React.Component {
 
   componentDidMount(){
     this.startJobShopWorker()
+  }
+  componentDidUpdate(prevProps, prevState, snapshot){
+    if( (prevProps.jobs !== this.props.jobs) || (prevProps.machines !== this.props.machines) ){
+      console.log("props changed, so restarting the simulation")
+      this.state.workerInstance.terminate();
+      this.startJobShopWorker()
+    }
+  }
+  componentWillUnmount(){
+    this.state.workerInstance.terminate();
   }
   handleChange = (event)=>{
     this.setState({[event.target.name]: event.target.value});
@@ -132,22 +172,24 @@ class App extends React.Component {
     const screenWidth = (window.innerWidth - 60)
     return (
       <div className="App">
-        <NavBar>
-          <li class="nav-item">
+        <nav className="d-flex factory-navbar bg-color-app-secondary">
+          <li className="nav-item no-list-style">
             <select className="form-control ml-2" name="algorithmType" onChange={this.handleChange} value={this.state.algorithmType}>
               <option value="random">Random Search</option>
               <option value="hillClimbing">Hill Climbing Search</option>
+              <option value="hillClimbingRestarts">Hill Climbing With Restarts</option>
             </select>
           </li> 
 
-          <li class="nav-item ml-2">
+          <li class="nav-item ml-2 no-list-style">
             <button className="btn btn-outline-danger ml-2" onClick={this.handleStopWorker}> Stop </button>
           </li>
           
-          <li class="nav-item ml-2">
+          <li class="nav-item ml-2 no-list-style">
             <button className="btn btn-outline-success" onClick={this.handleRestartJobShopWorkerButton}>  Restart with new settings </button>
           </li>
-        </NavBar>
+        </nav>
+        
 
         <div className="container">
           <div className="row">
@@ -221,55 +263,40 @@ class App extends React.Component {
         <hr></hr>
         <h3>Explanation</h3>
 
-          In this demo, we are trying to optimize how to run a water bottling plant. We have 5 machines for different operations, and various different types of products we need to produce.
+          In this demo, we are trying to optimize how to run a water bottling plant. 
+          <ul>
+            <li>The machines and the operations required for each job is listed in the machines tab. Feel free to click there to take a peek.</li>
+            <li>The operation sequence for each job is listed under Jobs menu</li>
+          </ul>
+          We have {this.props.machines.length} machines for different operations, and various different types of products we need to produce.
 
 
         <ol>
-          <li>Machine 0 - Bottle Expansion Molding</li>
-          <li>Machine 1 - Water Cleaning or purifying Machine </li>
-          <li>Machine 2 - Pouring water / Filling Process </li>
-          <li>Machine 3 - Capping</li>
-          <li>Machine 4 - Labelling</li>
+          {this.props.machines.map( (m, idx )=> {
+            return <li>
+              Machine Id {m.id} - {m.name}
+            </li>
+          })}
         </ol>
 
-        This factory produces 4 different types of water bottles, and each water bottling operation must be run in the following order:
+        This factory produces {this.props.jobs.length} different types of water bottles, and each water bottling operation must be run in the following order:
         <ol>
-          <li><span style={{backgroundColor:`${jobIdToColour(0)}`}}>Job 0 - Spring Water 16oz </span>
+          {this.props.jobs.map((j,idx)=>{
+            return <li>
+              <span style={{backgroundColor:`${jobIdToColour(idx)}`}}>Job id {j.id} - {j.name} </span>
               <ol>
-                <li>Bottle Expansion - 10 seconds</li>
-                <li>Water Purifying - 30 seconds</li>
-                <li>Water Filling - 10 seconds</li>
-                <li>Bottle Capping - 10 seconds</li>
-                <li>Bottle Labeling - 8 seconds</li>
+                {j.operations.map((o, idx) => {
+                  const allMachineTimes = o.machineAndTimes.map(mt => {
+                    return `| ${mt[1]} Seconds if run on Machine ${mt[0]} |`
+                  })
+                  return <li>{o.operationName}
+                    - {allMachineTimes}
+                  </li>
+                })}
               </ol>
-          </li>
-          <li><span style={{backgroundColor:`${jobIdToColour(1)}`}}>Job 1 - Distilled Water 16 oz</span>
-              <ol>
-                <li>Bottle Expansion - 50 seconds</li>
-                <li>Water Purifying - 60 seconds</li>
-                <li>Water Filling - 10 seconds</li>
-                <li>Bottle Capping - 10 seconds</li>
-                <li>Bottle Labeling - 16 seconds</li>
-              </ol>
-          </li>
-          <li><span style={{backgroundColor:`${jobIdToColour(2)}`}}>Job 2 - Distilled Water 32 oz</span>
-              <ol>
-                <li>Bottle Expansion - 30 seconds</li>
-                <li>Water Purifying - 90 seconds</li>
-                <li>Water Filling - 20 seconds</li>
-                <li>Bottle Capping - 10 seconds</li>
-                <li>Bottle Labeling - 16 seconds</li>
-              </ol>
-          </li>
-          <li><span style={{backgroundColor:`${jobIdToColour(3)}`}}>Job 3 - Bottoled Water 32 oz</span>
-              <ol>
-                <li>Bottle Expansion - 15 seconds</li>
-                <li>Water Purifying - 90 seconds</li>
-                <li>Water Filling - 20 seconds</li>
-                <li>Bottle Capping - 10 seconds</li>
-                <li>Bottle Labeling - 10 seconds</li>
-              </ol>
-          </li>
+            </li>
+          })}
+          
         </ol>
 
         Algorithm that runs in the background finds the most optimal way of running all the jobs in the given order. 

@@ -1,0 +1,35 @@
+.factory-navbar {
+  display: flex;
+  flex-direction: row;
+  width:100%;
+  background-color: rgb(52, 73, 94);
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+
+  .factory-navbar__right-arrow {
+    border-left: 40px solid white;
+    border-top: 24px solid transparent;
+    border-bottom: 24px solid transparent;
+
+    &.active {
+      border-left-color: green;
+    }
+  }
+  .active>.factory-navbar__menu-item {
+    border-bottom: 2px solid white;;
+  }
+  
+  .factory-navbar__menu-item {
+    padding: 10px 10px 10px 10px;
+    color: white;
+    &:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    list-style: none;
+    font-size: 1.2em;
+    border: 1px solid gray;
+    margin-left: 15px;
+  }
+
+}

@@ -1,0 +1,24 @@
+.machines-wrapper {
+  display: flex;
+
+  .machines-wrapper__main{
+    flex-grow: 1;
+    padding: 20px;
+    border: 1px solid darkgray;
+  }
+
+  .machines-wrapper__categories {
+    max-width: 40%;
+    padding: 20px;
+    border: 1px solid darkgray;
+  }  
+}
+
+.machine-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.machines-wrapper__main__title {
+  text-align: center;
+}
