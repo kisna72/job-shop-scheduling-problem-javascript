@@ -140,12 +140,6 @@ class FactoryOptimizationApp extends React.Component {
           </ul>
         </nav>
         <Switch>
-          <Route path="/" exact={true}>
-            <App
-              jobs={this.state.jobs}
-              machines={this.state.machines}
-            />
-          </Route>
           <Route path="/machines" exact={true}>
             <div className="container-fluid">
               <div className="row">
@@ -181,6 +175,12 @@ class FactoryOptimizationApp extends React.Component {
           </Route>
           <Route path="/parameters"  exact={true}>
             <Parameters  />
+          </Route>
+          <Route path="" exact={true}>
+            <App
+              jobs={this.state.jobs}
+              machines={this.state.machines}
+            />
           </Route>
 
         </Switch>
