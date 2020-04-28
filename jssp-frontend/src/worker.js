@@ -2,17 +2,17 @@ const workercode = () => {
     /**
      * Compiled Code -> ES3
      */
-    var __assign = (this && this.__assign) || function () {
-        __assign = Object.assign || function(t) {
-            for (var s, i = 1, n = arguments.length; i < n; i++) {
-                s = arguments[i];
-                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                    t[p] = s[p];
-            }
-            return t;
-        };
-        return __assign.apply(this, arguments);
-    };
+    // var __assign = (this && this.__assign) || function () {
+    //     __assign = Object.assign || function(t) {
+    //         for (var s, i = 1, n = arguments.length; i < n; i++) {
+    //             s = arguments[i];
+    //             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+    //                 t[p] = s[p];
+    //         }
+    //         return t;
+    //     };
+    //     return __assign.apply(this, arguments);
+    // };
     var __spreadArrays = (this && this.__spreadArrays) || function () {
         for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
         for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -74,15 +74,15 @@ const workercode = () => {
          */
         JobShopProblem.prototype.addMachine = function (name,id,tags) {
             id = id ? id : Array.from(this.resources.keys()).reduce(function (prev, curr) { return curr >= prev ? curr + 1 : prev; }, 0);
-            var machine = __assign({ id: id, name: name, type: ResourceTypeEnum.MACHINE }, (tags && { tags: tags }));
+            var machine = { id: id, name: name, type: ResourceTypeEnum.MACHINE };
             this.resources.set(id, machine);
             return id;
         };
         JobShopProblem.prototype.addResource = function (resource) {
             if (!resource.id) {
                 var id = Array.from(this.resources.keys()).reduce(function (prev, curr) { return curr >= prev ? curr + 1 : prev; }, 0);
-                var _resource = __assign(__assign({}, resource), { id: id });
-                this.resources.set(id, _resource);
+                resource.id = id
+                this.resources.set(id, resource);
                 return id;
             }
             else {
@@ -725,5 +725,5 @@ code = code.substring(code.indexOf("{")+1, code.lastIndexOf("}"));
 
 const blob = new Blob([code], {type: "application/javascript"});
 const worker_script = URL.createObjectURL(blob);
-
+console.log("generated worker script is ", worker_script)
 export default worker_script;
