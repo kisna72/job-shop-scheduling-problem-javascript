@@ -13,7 +13,7 @@ const workercode = () => {
     //     };
     //     return __assign.apply(this, arguments);
     // };
-    // var __spreadArrays = (this && this.__spreadArrays) || function () {
+    // var __spreadArrays = function () {
     //     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     //     for (var r = Array(s), k = 0, i = 0; i < il; i++)
     //         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -180,7 +180,11 @@ const workercode = () => {
                     ganttChartMachineMap.set(operation.machine, [jobId, startTime, endTime]);
                 }
                 else {
-                    ganttChartMachineMap.set(operation.machine, [...scheduleSoFar, jobId, startTime, endTime]);
+                    scheduleSoFar.push(jobId);
+                    scheduleSoFar.push(startTime);
+                    scheduleSoFar.push(endTime);
+                    ganttChartMachineMap.set(operation.machine, scheduleSoFar);
+                    //ganttChartMachineMap.set(operation.machine, [...scheduleSoFar, jobId, startTime, endTime]);
                 }
                 return endTime;
             };
@@ -199,7 +203,7 @@ const workercode = () => {
                         var maxEndTime = Math.max.apply(Math, endTimes);
                         jobEarliestStartMap.set(jobId, maxEndTime + 1);
                     }
-                    else if (complexOperation.type == ComplexOperationTypeEnum.CAN_RUN_IN_MULTIPLE_MACINES) {
+                    else if (complexOperation.type === ComplexOperationTypeEnum.CAN_RUN_IN_MULTIPLE_MACINES) {
                         var randomlyChoosenOperationFromMultipleMachineOptions = complexOperation.operations[Math.floor(Math.random() * complexOperation.operations.length)];
                         var endTime = addOperationToSchedule(randomlyChoosenOperationFromMultipleMachineOptions, jobId); // cast before sending .
                         jobEarliestStartMap.set(jobId, endTime + 1);
