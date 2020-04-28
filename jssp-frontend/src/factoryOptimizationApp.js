@@ -140,7 +140,7 @@ class FactoryOptimizationApp extends React.Component {
           </ul>
         </nav>
         <Switch>
-          <Route path="">
+          <Route path="/" exact={true}>
             <App
               jobs={this.state.jobs}
               machines={this.state.machines}
