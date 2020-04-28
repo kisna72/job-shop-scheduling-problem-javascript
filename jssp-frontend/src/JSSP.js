@@ -1,8 +1,49 @@
+import GanttMachineSchedule from "./GanttMachineSchedule";
+
+
+const jobObjectToArrayOfArray = (job) => {
+    const operationReducer = (acc, operation) => {
+      const numberOfMachineOptions = operation.machineAndTimes.length;
+      // const flattenedMachineTimes = operation.machineAndTimes.map()
+      return [...acc, numberOfMachineOptions, ...operation.machineAndTimes.flat().map(t => parseInt(t)) ] //converting to int just in case
+    }
+    const flattened = job.operations.reduce(operationReducer, []);
+    console.log(flattened)
+    return flattened
+  }
+/**
+ * Generate a job from this.state.jobs, and this.state.machines 
+ */
+const generateProblemInstance = (jobs, machines) => {
+console.log("running problemInstance", jobs, machines)
+const arrOfArr = jobs.map(job => {
+    return jobObjectToArrayOfArray(job);
+})
+const jsspProblem = new JSSPProblemInstance(jobs.length,machines.length);
+jsspProblem.jobs = arrOfArr
+// Infer number of machines the job needs to run based on job definition.
+jsspProblem.numMachineByJobs = []
+jsspProblem.jobs.forEach(jobDefArr => {
+  let numMachines = 0
+  let nextIndexToCheck = 0;
+  for(let i = 0; i < jobDefArr.length; i++ ){
+    if(i === nextIndexToCheck){
+      numMachines += 1
+      nextIndexToCheck = i + jobDefArr[i]*2 + 1
+    }
+  }
+  jsspProblem.numMachineByJobs.push(numMachines)
+})
+
+return jsspProblem
+}
+
 /**
  * Returns a new instance of JSSP Problem Instance. 
  * @param {*} n number of Jobs
  * @param {*} m number of Machines
  * @param {*} mbar Don't Use
+ * @param {[[numMachines, machineId1, machineTime1, machineIdN , machineTimeN, numMachines, machineIdx,...  ]]} jobs array of jobs
  */
 function JSSPProblemInstance(n,m,mbar){
     this.numJobs = n;
@@ -81,7 +122,7 @@ function JSSP1DEncoding(jobs1d){
             // console.log(`Current Job for Job Number ${jobNumber}  :` ,firstJob)
             const machine = firstJob[0];
             const time = firstJob[1]
-    
+            console.log(machine);
             // Now fill Gantt Chart
             const firstAvailableTimeOnMachine = ganttChart[machine].length === 0 ? 0 : ganttChart[machine][ganttChart[machine].length -1]
             // What is the last time of dependent job? We can find that out dependent jobs by looking at job instance from before...
@@ -136,5 +177,7 @@ export {
     JSSPGanttChartSolution,
     JSSP1DEncoding,
     FishesYatesShuffle,
-    generateRandom1D
+    generateRandom1D,
+    jobObjectToArrayOfArray,
+    generateProblemInstance
 }

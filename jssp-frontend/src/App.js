@@ -172,8 +172,8 @@ class App extends React.Component {
     const screenWidth = (window.innerWidth - 60)
     return (
       <div className="App">
-        <NavBar>
-          <li class="nav-item">
+        <nav className="d-flex factory-navbar bg-color-app-secondary">
+          <li className="nav-item no-list-style">
             <select className="form-control ml-2" name="algorithmType" onChange={this.handleChange} value={this.state.algorithmType}>
               <option value="random">Random Search</option>
               <option value="hillClimbing">Hill Climbing Search</option>
@@ -181,14 +181,15 @@ class App extends React.Component {
             </select>
           </li> 
 
-          <li class="nav-item ml-2">
+          <li class="nav-item ml-2 no-list-style">
             <button className="btn btn-outline-danger ml-2" onClick={this.handleStopWorker}> Stop </button>
           </li>
           
-          <li class="nav-item ml-2">
+          <li class="nav-item ml-2 no-list-style">
             <button className="btn btn-outline-success" onClick={this.handleRestartJobShopWorkerButton}>  Restart with new settings </button>
           </li>
-        </NavBar>
+        </nav>
+        
 
         <div className="container">
           <div className="row">
@@ -262,55 +263,40 @@ class App extends React.Component {
         <hr></hr>
         <h3>Explanation</h3>
 
-          In this demo, we are trying to optimize how to run a water bottling plant. We have 5 machines for different operations, and various different types of products we need to produce.
+          In this demo, we are trying to optimize how to run a water bottling plant. 
+          <ul>
+            <li>The machines and the operations required for each job is listed in the machines tab. Feel free to click there to take a peek.</li>
+            <li>The operation sequence for each job is listed under Jobs menu</li>
+          </ul>
+          We have {this.props.machines.length} machines for different operations, and various different types of products we need to produce.
 
 
         <ol>
-          <li>Machine 0 - Bottle Expansion Molding</li>
-          <li>Machine 1 - Water Cleaning or purifying Machine </li>
-          <li>Machine 2 - Pouring water / Filling Process </li>
-          <li>Machine 3 - Capping</li>
-          <li>Machine 4 - Labelling</li>
+          {this.props.machines.map( (m, idx )=> {
+            return <li>
+              Machine Id {m.id} - {m.name}
+            </li>
+          })}
         </ol>
 
-        This factory produces 4 different types of water bottles, and each water bottling operation must be run in the following order:
+        This factory produces {this.props.jobs.length} different types of water bottles, and each water bottling operation must be run in the following order:
         <ol>
-          <li><span style={{backgroundColor:`${jobIdToColour(0)}`}}>Job 0 - Spring Water 16oz </span>
+          {this.props.jobs.map((j,idx)=>{
+            return <li>
+              <span style={{backgroundColor:`${jobIdToColour(idx)}`}}>Job id {j.id} - {j.name} </span>
               <ol>
-                <li>Bottle Expansion - 10 seconds</li>
-                <li>Water Purifying - 30 seconds</li>
-                <li>Water Filling - 10 seconds</li>
-                <li>Bottle Capping - 10 seconds</li>
-                <li>Bottle Labeling - 8 seconds</li>
+                {j.operations.map((o, idx) => {
+                  const allMachineTimes = o.machineAndTimes.map(mt => {
+                    return `| ${mt[1]} Seconds if run on Machine ${mt[0]} |`
+                  })
+                  return <li>{o.operationName}
+                    - {allMachineTimes}
+                  </li>
+                })}
               </ol>
-          </li>
-          <li><span style={{backgroundColor:`${jobIdToColour(1)}`}}>Job 1 - Distilled Water 16 oz</span>
-              <ol>
-                <li>Bottle Expansion - 50 seconds</li>
-                <li>Water Purifying - 60 seconds</li>
-                <li>Water Filling - 10 seconds</li>
-                <li>Bottle Capping - 10 seconds</li>
-                <li>Bottle Labeling - 16 seconds</li>
-              </ol>
-          </li>
-          <li><span style={{backgroundColor:`${jobIdToColour(2)}`}}>Job 2 - Distilled Water 32 oz</span>
-              <ol>
-                <li>Bottle Expansion - 30 seconds</li>
-                <li>Water Purifying - 90 seconds</li>
-                <li>Water Filling - 20 seconds</li>
-                <li>Bottle Capping - 10 seconds</li>
-                <li>Bottle Labeling - 16 seconds</li>
-              </ol>
-          </li>
-          <li><span style={{backgroundColor:`${jobIdToColour(3)}`}}>Job 3 - Bottoled Water 32 oz</span>
-              <ol>
-                <li>Bottle Expansion - 15 seconds</li>
-                <li>Water Purifying - 90 seconds</li>
-                <li>Water Filling - 20 seconds</li>
-                <li>Bottle Capping - 10 seconds</li>
-                <li>Bottle Labeling - 10 seconds</li>
-              </ol>
-          </li>
+            </li>
+          })}
+          
         </ol>
 
         Algorithm that runs in the background finds the most optimal way of running all the jobs in the given order. 

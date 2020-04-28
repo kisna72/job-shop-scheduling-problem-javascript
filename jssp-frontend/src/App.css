@@ -24,6 +24,7 @@
 /*
 For Nav Links
 */
+
 nav.header {
   display: flex;
   padding: 20px;
@@ -52,7 +53,6 @@ nav.sub-header {
 .nav-link__link:hover{
   transform: scale(1.1);
 }
-
 
 .explanation{
   text-align: left;

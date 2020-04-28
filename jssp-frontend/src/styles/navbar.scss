@@ -15,6 +15,9 @@
       border-left-color: green;
     }
   }
+  .active>.factory-navbar__menu-item {
+    border-bottom: 2px solid white;;
+  }
   
   .factory-navbar__menu-item {
     padding: 10px 10px 10px 10px;

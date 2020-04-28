@@ -6,6 +6,7 @@ import JobEditor from './Pages/Jobs';
 import Parameters from './mainAppComponents/Parameters';
 import { JSSPProblemInstance } from './JSSP';
 import JobSetup from './JobSetup';
+import "./styles/util.scss";
 import App from './App';
 import {
   BrowserRouter as Router,
@@ -32,8 +33,10 @@ class FactoryOptimizationApp extends React.Component {
   }
 
   componentDidMount(){
-    const machines = JSON.parse(localStorage.getItem("machines") || "[]" );
-    const categories = JSON.parse(localStorage.getItem("categories") || "[]");
+    const jobsStr = '[{"id":1,"name":"Spring Water 16oz","operations":[{"id":1,"operationName":"Bottle Expansion","machineAndTimes":[[1,"10"],["6","20"]]},{"id":2,"operationName":"Water Purifying","machineAndTimes":[["2","10"]]},{"id":3,"operationName":"Water Filling","machineAndTimes":[["3","10"]]},{"id":4,"operationName":"Bottle Capping","machineAndTimes":[["4","10"]]},{"id":5,"operationName":"Bottle Labeling","machineAndTimes":[["5","8"]]},{"id":6,"operationName":"Bottle Labeling 2","machineAndTimes":[["5","10"]]},{"id":7,"operationName":"Bottle Labeling 3","machineAndTimes":[["5","10"]]}]},{"id":2,"name":"Distilled Water 16oz","operations":[{"id":1,"operationName":"Bottle Expansion","machineAndTimes":[[1,"50"],["6","30"]]},{"id":2,"operationName":"Water Purifying","machineAndTimes":[["2","15"]]},{"id":3,"operationName":"Water Filling","machineAndTimes":[["3","10"]]},{"id":4,"operationName":"Bottle Capping","machineAndTimes":[["4","10"]]}]},{"id":3,"name":"Distilled Water 32oz","operations":[{"id":1,"operationName":"Bottle Expansion ","machineAndTimes":[[1,"30"],["6","50"]]},{"id":2,"operationName":"Water Purifying","machineAndTimes":[["2","12"]]},{"id":3,"operationName":"Water Filling","machineAndTimes":[["3","20"]]},{"id":4,"operationName":"Bottle Capping","machineAndTimes":[["4","10"]]},{"id":5,"operationName":"Bottle Labeling","machineAndTimes":[["5","16"]]}]},{"id":4,"name":"Bottle Water 32oz","operations":[{"id":1,"operationName":"Bottle Expansion ","machineAndTimes":[[1,"15"],["6","20"]]},{"id":2,"operationName":"Water Purifying","machineAndTimes":[["2","30"]]},{"id":3,"operationName":"Water Filling","machineAndTimes":[["3","20"]]},{"id":4,"operationName":"Bottle Capping","machineAndTimes":[["4","10"]]},{"id":5,"operationName":"Bottle Labeling","machineAndTimes":[["5","10"]]}]}]'
+    const machinesStr = '[{"name":"Bottle Expansion Mold Machine","categories":[],"id":1},{"name":"Water Cleaning Machine","categories":[],"id":2},{"name":"Water Filling Machine","categories":[],"id":3},{"name":"Bottle Capping Machine","categories":[],"id":4},{"name":"Bottle Labeling Machine","categories":[],"id":5},{"name":"Bottle Expansion Mold Machine 2","categories":[],"id":6}]'
+    const machines = JSON.parse(localStorage.getItem("machines") || JSON.parse(machinesStr) );
+    const categories = JSON.parse(localStorage.getItem("categories") || JSON.parse(jobsStr));
     const jobs = JSON.parse(localStorage.getItem("jobs") || "[]");
     this.setState({
       machines,
@@ -122,24 +125,28 @@ class FactoryOptimizationApp extends React.Component {
   render() {
     return (
       <Router>
-        <nav>
-          <ul className='factory-navbar'>
-            <NavLink to="">
+        <nav className='factory-navbar d-flex justify-content-between'>          
+          <div className="ml-2 navbar-brand text-white">Water Bottling Plant Makespan Optimization</div>
+          <ul className="d-flex mr-5">
+            <NavLink to="machines">
               <li className='factory-navbar__menu-item'>Machines</li> 
             </NavLink>
             <NavLink to="jobs">
               <li className='factory-navbar__menu-item'>Jobs</li> 
             </NavLink>
-            <NavLink to="parameters">
-              <li className='factory-navbar__menu-item'>Solution Parameters</li> 
-            </NavLink>
-            <NavLink to="solution">
+            <NavLink to="/" exact>
               <li className='factory-navbar__menu-item'>Solve</li> 
             </NavLink>
           </ul>
         </nav>
         <Switch>
           <Route path="/" exact={true}>
+            <App
+              jobs={this.state.jobs}
+              machines={this.state.machines}
+            />
+          </Route>
+          <Route path="/machines" exact={true}>
             <div className="container-fluid">
               <div className="row">
                 <div className="col-sm-8">
@@ -163,7 +170,7 @@ class FactoryOptimizationApp extends React.Component {
               </div>
             </div>
           </Route>
-          <Route path="/jobs">
+          <Route path="/jobs"  exact={true}>
             <JobEditor 
               createJob={this.createJob}
               updateJob={this.updateJob}
@@ -172,15 +179,10 @@ class FactoryOptimizationApp extends React.Component {
               machines={this.state.machines}
             />
           </Route>
-          <Route path="/parameters">
+          <Route path="/parameters"  exact={true}>
             <Parameters  />
           </Route>
-          <Route path="/solution">
-            <App
-              jobs={this.state.jobs}
-              machines={this.state.machines}
-            />
-          </Route>
+
         </Switch>
       </Router>
     )

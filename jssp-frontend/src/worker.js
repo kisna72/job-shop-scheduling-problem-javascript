@@ -385,7 +385,15 @@ const workercode = () => {
                         newMakeSpanToPushToUI = makespan
                 }
                 makeSpanHistory.push(newMakeSpanToPushToUI)
-                if(currentSimCount%100  === 0){
+                let send;
+                if(currentSimCount < 100){
+                    send = currentSimCount % 1 === 0
+                } else if (currentSimCount < 1000){
+                    send = currentSimCount % 10 === 0
+                } else {
+                    send = currentSimCount % 100 === 0
+                }
+                if(send){
                     const returnData = {
                         type:'iterationCount',
                         iteration:currentSimCount,
