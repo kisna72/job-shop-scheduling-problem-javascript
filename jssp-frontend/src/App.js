@@ -181,11 +181,11 @@ class App extends React.Component {
             </select>
           </li> 
 
-          <li class="nav-item ml-2 no-list-style">
+          <li className="nav-item ml-2 no-list-style">
             <button className="btn btn-outline-danger ml-2" onClick={this.handleStopWorker}> Stop </button>
           </li>
           
-          <li class="nav-item ml-2 no-list-style">
+          <li className="nav-item ml-2 no-list-style">
             <button className="btn btn-outline-success" onClick={this.handleRestartJobShopWorkerButton}>  Restart with new settings </button>
           </li>
         </nav>
@@ -234,7 +234,7 @@ class App extends React.Component {
                   <tr>
                     <td>Maximum Time in seconds</td>
                     <td>
-                      <input type="number" style={{width:'4em'}} name="algorithmMaxTimeSecs" onChange={this.handleChange} value={this.state.algorithmMaxTimeSecs} class="form-controll" placeholder="Max number of iterations"/>
+                      <input type="number" style={{width:'4em'}} name="algorithmMaxTimeSecs" onChange={this.handleChange} value={this.state.algorithmMaxTimeSecs} className="form-controll" placeholder="Max number of iterations"/>
                     </td>
                   </tr>
                 </tbody>
@@ -273,7 +273,7 @@ class App extends React.Component {
 
         <ol>
           {this.props.machines.map( (m, idx )=> {
-            return <li>
+            return <li key={m.id}>
               Machine Id {m.id} - {m.name}
             </li>
           })}
@@ -282,14 +282,14 @@ class App extends React.Component {
         This factory produces {this.props.jobs.length} different types of water bottles, and each water bottling operation must be run in the following order:
         <ol>
           {this.props.jobs.map((j,idx)=>{
-            return <li>
+            return <li key={j.id}>
               <span style={{backgroundColor:`${jobIdToColour(idx)}`}}>Job id {j.id} - {j.name} </span>
               <ol>
                 {j.operations.map((o, idx) => {
                   const allMachineTimes = o.machineAndTimes.map(mt => {
                     return `| ${mt[1]} Seconds if run on Machine ${mt[0]} |`
                   })
-                  return <li>{o.operationName}
+                  return <li key={idx}>{o.operationName}
                     - {allMachineTimes}
                   </li>
                 })}
