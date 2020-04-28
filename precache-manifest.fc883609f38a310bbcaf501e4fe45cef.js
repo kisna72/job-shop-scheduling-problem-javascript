@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "dd70efd4d9519a09dba3608b8b227ad6",
+    "revision": "cab44b26dd35f267f08a41cd0122109d",
     "url": "/job-shop-scheduling-problem-javascript/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/job-shop-scheduling-problem-javascript/static/css/2.5aee5a20.chunk.css"
   },
   {
-    "revision": "c2cc0a6369822fdb2526",
+    "revision": "d85899fea245af7205aa",
     "url": "/job-shop-scheduling-problem-javascript/static/css/main.63bb3033.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/job-shop-scheduling-problem-javascript/static/js/2.291c1da2.chunk.js"
   },
   {
-    "revision": "c2cc0a6369822fdb2526",
-    "url": "/job-shop-scheduling-problem-javascript/static/js/main.eb41949e.chunk.js"
+    "revision": "d85899fea245af7205aa",
+    "url": "/job-shop-scheduling-problem-javascript/static/js/main.07600b12.chunk.js"
   },
   {
     "revision": "43657e56636307eb2aea",
