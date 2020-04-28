@@ -124,7 +124,7 @@ class FactoryOptimizationApp extends React.Component {
 
   render() {
     return (
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <nav className='factory-navbar d-flex justify-content-between'>          
           <div className="ml-2 navbar-brand text-white">Water Bottling Plant Makespan Optimization</div>
           <ul className="d-flex mr-5">
@@ -140,7 +140,7 @@ class FactoryOptimizationApp extends React.Component {
           </ul>
         </nav>
         <Switch>
-          <Route path="/" exact={true}>
+          <Route path="/">
             <App
               jobs={this.state.jobs}
               machines={this.state.machines}
