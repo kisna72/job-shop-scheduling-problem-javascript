@@ -8,6 +8,9 @@ import { JSSPProblemInstance } from './JSSP';
 import { NavBar } from './components/navbar';
 import TwoDPlot from './TwoDPlot';
 import  { jobObjectToArrayOfArray, generateProblemInstance } from './JSSP';
+import uPlot from "uplot";
+import "uplot/dist/uPlot.min.css";
+
 
 // Create a new instance of JSSPProblemInstance and assign jobs for water bottle plant.
 
@@ -85,12 +88,17 @@ class App extends React.Component {
       iterations:0,
       workerInstance : new Worker(WebWorkerScript),
       makeSpanHistory:[],
-      maxAlgorithmRepetition:10000,
+      maxAlgorithmRepetition:100,
       algorithmMaxTimeSecs:30,
-      algorithmType: 'hillClimbingRestarts' // random || hillClimbing || hillClimbingRestarts
+      algorithmType: 'hillClimbingRestarts', // random || hillClimbing || hillClimbingRestarts
+      uPlotRef: null,
+      simulationStartTime: Math.round((new Date()).getTime() / 1000)
     }
   }
   startJobShopWorker = () => {
+    this.setState({
+      simulationStartTime: Math.round((new Date()).getTime() / 1000)
+    })
     console.log("started worker")
     const workerInstance = new Worker(WebWorkerScript);
     
@@ -99,15 +107,15 @@ class App extends React.Component {
       // {"type":"iterationCount","value":200}
       // {"type":"newSchedule","value":[[],...]}
       if(e.data && e.data.type === "iterationCount"){
-        this.setState({
-          iterations:e.data.iteration,
-          makeSpanHistory:[...this.state.makeSpanHistory,...e.data.newMakeSpan]
-        })
+        const newYData = [...this.state.uPlotRef.data[1], ...e.data.newMakeSpan]
+        const newXData = new Array(newYData.length).fill(0).map( (v,i) => i )
+        // this.state.uPlotRef.delSeries(0);
+        this.state.uPlotRef.setData([newXData, newYData], true)
       }
       else if(e.data && e.data.type === "newSchedule"){
         const schedule = []
         e.data.schedule.forEach((value, key) => {
-          console.log(value)
+          // console.log(value)
           schedule.push(value)
         })
         this.setState({
@@ -116,7 +124,7 @@ class App extends React.Component {
           minMakeSpanDetectedIteration: e.data.minMakeSpanDetectedIteration
         });
       } else {
-        console.log("generic Message ", e.data);
+        //console.log("generic Message ", e.data);
       } 
     }, false);
     
@@ -135,8 +143,43 @@ class App extends React.Component {
       workerInstance: workerInstance,
     })
   }
+  createChart(){
+    const opts = {
+      title: "Best MakeSpan over Time/Simulations",
+      width: window.innerWidth - 40,
+      height: 300,
+      series: [
+        {
+          label:"Makespan"
+        },
+        {
+          stroke:"rgb(18, 147, 154)",
+          label: "Nth simulation",
+          width:2
+        }
+      ],
+      axes:[
+        {
+          label:"Nth Simulation"
+        },
+        {
+          label:"Makespan"
+        }
+      ],
+      scales: {
+        x: {
+          time: false
+        }
+      }
+    }
+    const uPlotRef = new uPlot(opts, [[null],[null]], document.getElementById("uplotChart"));
+    this.setState({
+      uPlotRef
+    })
+  }
 
   componentDidMount(){
+    this.createChart()
     this.startJobShopWorker()
   }
   componentDidUpdate(prevProps, prevState, snapshot){
@@ -156,6 +199,7 @@ class App extends React.Component {
   handleRestartJobShopWorkerButton = (e)=>{
     e.preventDefault();
     this.state.workerInstance.terminate();
+    this.state.uPlotRef.setData([[null],[null]])
     this.setState({
       schedule:[[],[]],
       makeSpan:Infinity,
@@ -244,8 +288,7 @@ class App extends React.Component {
         </div>
 
         <div style={{marginTop:'10px'}}>
-          <h6>Plot of makespan during each different simulation</h6>
-          <TwoDPlot data={this.state.makeSpanHistory} width={screenWidth} />
+          <div id="uplotChart"></div>
         </div>
         <hr></hr>
         <h6>Schedule with the least makespan</h6>

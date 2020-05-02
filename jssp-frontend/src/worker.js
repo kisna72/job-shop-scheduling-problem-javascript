@@ -151,7 +151,7 @@ const workercode = () => {
                     count += 1;
                 }
             });
-            console.log("number of operations is ", count);
+            //console.log("number of operations is ", count);
             return count;
         };
         JobShopProblem.prototype.oneDToGanttChart = function (oned) {
@@ -393,9 +393,9 @@ const workercode = () => {
                 if(currentSimCount < 100){
                     send = currentSimCount % 1 === 0
                 } else if (currentSimCount < 1000){
-                    send = currentSimCount % 10 === 0
-                } else {
                     send = currentSimCount % 100 === 0
+                } else {
+                    send = currentSimCount % 1000 === 0
                 }
                 if(send){
                     const returnData = {
@@ -417,8 +417,8 @@ const workercode = () => {
                 }
                 postMessage(returnData);
             }
-            console.log("Termination criteria passed");
-            console.log("shortest makespan is ", bestMakeSpan);
+            // console.log("Termination criteria passed");
+            // console.log("shortest makespan is ", bestMakeSpan);
             // console.log(bestGanttChart)
             return {
                 bestGanttChart: bestGanttChart,
