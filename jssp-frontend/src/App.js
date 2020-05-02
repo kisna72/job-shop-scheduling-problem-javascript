@@ -111,9 +111,17 @@ class App extends React.Component {
         if(this.state.algorithmType === "hillClimbingRestarts"){
           dataSource = "localMakeSpanHistory";
         }
-        const newXData = [...this.state.uPlotRef.data[0], ...e.data[dataSource][0]]
-        const newYData = [...this.state.uPlotRef.data[1], ...e.data[dataSource][1]]
-        this.state.uPlotRef.setData([newXData, newYData], true)
+        let newXData;
+        let newYData;
+        setTimeout(_=>{
+          newXData = [...this.state.uPlotRef.data[0], ...e.data[dataSource][0]]
+        })
+        setTimeout(_ => {
+          newYData = [...this.state.uPlotRef.data[1], ...e.data[dataSource][1]]
+        })
+        setTimeout(() => {
+          this.state.uPlotRef.setData([newXData, newYData], true)
+        }, 0)
       }
       else if(e.data && e.data.type === "newSchedule"){
         const schedule = []
