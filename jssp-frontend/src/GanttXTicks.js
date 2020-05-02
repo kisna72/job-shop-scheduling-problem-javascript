@@ -9,7 +9,7 @@ class GanttXTicks extends React.Component {
         const ticks = []
         const startTickStyle = {
             left:0,
-            transition: 'all 1s linear',
+            transition: 'all 0.5s linear',
             position:'absolute'
         }
         const startTick = <span style={startTickStyle}>
@@ -21,7 +21,7 @@ class GanttXTicks extends React.Component {
             const _startpx = 100* i / this.props.maxTime
             const style = {
                 left:`${_startpx}%`,
-                transition: 'all 1s linear',
+                transition: 'all 0.5s linear',
                 position:'absolute'
             }
             if(i%10 === 0){
@@ -34,7 +34,7 @@ class GanttXTicks extends React.Component {
         }
         const endTickStyle = {
             left:'100%',
-            transition: 'all 1s linear',
+            transition: 'all 0.5s linear',
             position:'absolute'
         }
         const endTick = <span style={endTickStyle}>
