@@ -26,7 +26,7 @@ function GanttMachineSchedule(props) {
                 transition: 'all 1s linear'
             }
 
-            const width = <div id={`key-${props.index}-${jobid}`} className={`job-${jobid}`}  style={style} data-start={start} data-end={end} data-jobid={jobid}>Job-{jobid}</div>
+            const width = <div key={`key-${props.index}-${jobid}-${i}`} id={`key-${props.index}-${jobid}`} className={`job-${jobid}`}  style={style} data-start={start} data-end={end} data-jobid={jobid}>Job-{jobid}</div>
             a.push(width)
         }
         continue

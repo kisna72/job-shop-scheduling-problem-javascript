@@ -336,7 +336,7 @@ class App extends React.Component {
         <ol>
           {this.props.jobs.map((j,idx)=>{
             return <li key={j.id}>
-              <span style={{backgroundColor:`${jobIdToColour(idx)}`}}>Job id {j.id} - {j.name} </span>
+              <span style={{backgroundColor:`${jobIdToColour(j.id)}`}}>Job id {j.id} - {j.name} </span>
               <ol>
                 {j.operations.map((o, idx) => {
                   const allMachineTimes = o.machineAndTimes.map(mt => {

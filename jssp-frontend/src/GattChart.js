@@ -13,13 +13,13 @@ function GanttChart(props) {
             <div className="ganttChartYAxis">
 
                 {props.machines.map( (machine,idx)=>{
-                    return <span className="yAxisTick">{`${machine.name} Machine`}</span>
+                    return <span key={machine.id} className="yAxisTick">{`${machine.name} Machine`}</span>
                 })}
 
             </div>
             <div className="ganttChartData">
                 {props.schedule.map( (sch,idx) => 
-                    <GanttMachineSchedule schedule={sch} maxTime={maxTime} index={idx}/>)}
+                    <GanttMachineSchedule key={idx} schedule={sch} maxTime={maxTime} index={idx}/>)}
                 <GanttXTicks index={props.schedule.length} maxTime={maxTime} />
             </div>
         </div>
