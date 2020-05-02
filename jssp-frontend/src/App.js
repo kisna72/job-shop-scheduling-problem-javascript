@@ -150,17 +150,17 @@ class App extends React.Component {
       height: 300,
       series: [
         {
-          label:"Makespan"
+          label:"Simulation Count"
         },
         {
           stroke:"rgb(18, 147, 154)",
-          label: "Nth simulation",
+          label: "Makespan",
           width:2
         }
       ],
       axes:[
         {
-          label:"Nth Simulation"
+          label:"Simulation Count"
         },
         {
           label:"Makespan"
