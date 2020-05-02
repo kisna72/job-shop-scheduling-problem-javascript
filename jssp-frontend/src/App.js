@@ -88,7 +88,7 @@ class App extends React.Component {
       iterations:0,
       workerInstance : new Worker(WebWorkerScript),
       makeSpanHistory:[],
-      maxAlgorithmRepetition:100,
+      maxAlgorithmRepetition:10000,
       algorithmMaxTimeSecs:30,
       algorithmType: 'hillClimbingRestarts', // random || hillClimbing || hillClimbingRestarts
       uPlotRef: null,
