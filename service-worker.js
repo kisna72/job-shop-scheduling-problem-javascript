@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/job-shop-scheduling-problem-javascript/precache-manifest.965a2dccada45c2367554542585911d8.js"
+  "/job-shop-scheduling-problem-javascript/precache-manifest.f500a8fcfbb6b8ed9f5accaf07637ddc.js"
 );
 
 self.addEventListener('message', (event) => {

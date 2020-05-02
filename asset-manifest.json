@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/job-shop-scheduling-problem-javascript/static/css/main.63bb3033.chunk.css",
-    "main.js": "/job-shop-scheduling-problem-javascript/static/js/main.654e7f76.chunk.js",
-    "main.js.map": "/job-shop-scheduling-problem-javascript/static/js/main.654e7f76.chunk.js.map",
+    "main.js": "/job-shop-scheduling-problem-javascript/static/js/main.94f1714f.chunk.js",
+    "main.js.map": "/job-shop-scheduling-problem-javascript/static/js/main.94f1714f.chunk.js.map",
     "runtime-main.js": "/job-shop-scheduling-problem-javascript/static/js/runtime-main.aa4ec9c1.js",
     "runtime-main.js.map": "/job-shop-scheduling-problem-javascript/static/js/runtime-main.aa4ec9c1.js.map",
     "static/css/2.d14e153a.chunk.css": "/job-shop-scheduling-problem-javascript/static/css/2.d14e153a.chunk.css",
-    "static/js/2.168fe597.chunk.js": "/job-shop-scheduling-problem-javascript/static/js/2.168fe597.chunk.js",
-    "static/js/2.168fe597.chunk.js.map": "/job-shop-scheduling-problem-javascript/static/js/2.168fe597.chunk.js.map",
+    "static/js/2.dd82d5f1.chunk.js": "/job-shop-scheduling-problem-javascript/static/js/2.dd82d5f1.chunk.js",
+    "static/js/2.dd82d5f1.chunk.js.map": "/job-shop-scheduling-problem-javascript/static/js/2.dd82d5f1.chunk.js.map",
     "index.html": "/job-shop-scheduling-problem-javascript/index.html",
-    "precache-manifest.965a2dccada45c2367554542585911d8.js": "/job-shop-scheduling-problem-javascript/precache-manifest.965a2dccada45c2367554542585911d8.js",
+    "precache-manifest.f500a8fcfbb6b8ed9f5accaf07637ddc.js": "/job-shop-scheduling-problem-javascript/precache-manifest.f500a8fcfbb6b8ed9f5accaf07637ddc.js",
     "service-worker.js": "/job-shop-scheduling-problem-javascript/service-worker.js",
     "static/css/2.d14e153a.chunk.css.map": "/job-shop-scheduling-problem-javascript/static/css/2.d14e153a.chunk.css.map",
     "static/css/main.63bb3033.chunk.css.map": "/job-shop-scheduling-problem-javascript/static/css/main.63bb3033.chunk.css.map"
@@ -17,8 +17,8 @@
   "entrypoints": [
     "static/js/runtime-main.aa4ec9c1.js",
     "static/css/2.d14e153a.chunk.css",
-    "static/js/2.168fe597.chunk.js",
+    "static/js/2.dd82d5f1.chunk.js",
     "static/css/main.63bb3033.chunk.css",
-    "static/js/main.654e7f76.chunk.js"
+    "static/js/main.94f1714f.chunk.js"
   ]
 }
