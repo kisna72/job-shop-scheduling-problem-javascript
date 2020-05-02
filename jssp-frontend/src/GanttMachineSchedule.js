@@ -5,9 +5,7 @@ import jobIdToColour from './jobIdToColor';
  * Idea here is to take an array
  */
 function GanttMachineSchedule(props) {
-    const randColor = () => {
-        return Math.floor(Math.random() * 180) //use 180 instead of 255 to avoid colors too light
-    }
+
     let a = [] 
     for(let i = 0; i< props.schedule.length; i++){
         if(i%3 === 0){

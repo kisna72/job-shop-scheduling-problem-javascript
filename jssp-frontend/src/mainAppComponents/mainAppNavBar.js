@@ -8,7 +8,7 @@ function MainAppNavBar(props){
     <nav>
       <ul className='factory-navbar'>
       {menuItems.map(menu => {
-        const activeClass = menu == props.activeMenu ? 'active' : ''
+        const activeClass = menu === props.activeMenu ? 'active' : ''
         console.log("activeClass " , activeClass)
         return <> 
           <li className='factory-navbar__menu-item' onClick={() => props.handleClick(menu)}>{menu}</li> 

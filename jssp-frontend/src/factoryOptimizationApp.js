@@ -1,18 +1,14 @@
 import React from 'react';
-import MainAppNavBar from './mainAppComponents/mainAppNavBar';
 import Machines from './Pages/Machines';
 import Categories from './Pages/Categories';
 import JobEditor from './Pages/Jobs';
 import Parameters from './mainAppComponents/Parameters';
-import { JSSPProblemInstance } from './JSSP';
-import JobSetup from './JobSetup';
 import "./styles/util.scss";
 import App from './App';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   NavLink
 } from "react-router-dom";
 /**

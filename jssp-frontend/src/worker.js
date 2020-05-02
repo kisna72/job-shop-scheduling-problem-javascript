@@ -215,8 +215,8 @@ const workercode = () => {
                 else {
                     // if operation is not complex, we simply add the operation to the schedule.
                     var _operation = operation;
-                    var endTime = addOperationToSchedule(_operation, jobId);
-                    jobEarliestStartMap.set(jobId, endTime + 1);
+                    var _endTime = addOperationToSchedule(_operation, jobId);
+                    jobEarliestStartMap.set(jobId, _endTime + 1);
                 }
                 // at the end, incremebt the index of operation ...
                 // Open Question? What if the job is of type CAN_BE_SPLIT in 4 equal parts?
@@ -452,8 +452,7 @@ const workercode = () => {
      }
 
     onmessage = function(e) {
-        const that = this;
-        const { problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType, machines, jobs } = e.data; 
+        const { algorithmRepetition, algorithmMaxTimeSecs, algorithmType, machines, jobs } = e.data; 
         // console.log(problem, algorithmMaxTimeSecs);
         // _runOptimizationAlgo(problem, algorithmRepetition, algorithmMaxTimeSecs, algorithmType, that)
         const jsspSolver = new JobShopProblem();

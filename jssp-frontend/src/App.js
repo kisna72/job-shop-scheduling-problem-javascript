@@ -5,9 +5,7 @@ import jobIdToColour from './jobIdToColor';
 import WebWorkerScript from './worker';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { JSSPProblemInstance } from './JSSP';
-import { NavBar } from './components/navbar';
-import TwoDPlot from './TwoDPlot';
-import  { jobObjectToArrayOfArray, generateProblemInstance } from './JSSP';
+import  { generateProblemInstance } from './JSSP';
 import uPlot from "uplot";
 import "uplot/dist/uPlot.min.css";
 

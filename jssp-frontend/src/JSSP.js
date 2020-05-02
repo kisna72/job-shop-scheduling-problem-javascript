@@ -1,6 +1,3 @@
-import GanttMachineSchedule from "./GanttMachineSchedule";
-
-
 const jobObjectToArrayOfArray = (job) => {
     const operationReducer = (acc, operation) => {
       const numberOfMachineOptions = operation.machineAndTimes.length;
@@ -169,7 +166,6 @@ function generateRandom1D(numMachines, numJobs) {
     }
     const jssp1d = new JSSP1DEncoding(FishesYatesShuffle(jobs))
     return jssp1d
-    console.log(jobs)
 }
 
 export {

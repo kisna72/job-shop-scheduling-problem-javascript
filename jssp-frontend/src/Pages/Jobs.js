@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TextInput } from '../sharedComponents/react/Input';
-import { FaRegTrashAlt, FaEdit  } from 'react-icons/fa';
+import { FaRegTrashAlt  } from 'react-icons/fa';
 
 /**
  * Display a Job Operation
