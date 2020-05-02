@@ -8,6 +8,7 @@ import { JSSPProblemInstance } from './JSSP';
 import  { generateProblemInstance } from './JSSP';
 import uPlot from "uplot";
 import "uplot/dist/uPlot.min.css";
+import "./styles/util.scss";
 
 
 // Create a new instance of JSSPProblemInstance and assign jobs for water bottle plant.
@@ -224,7 +225,7 @@ class App extends React.Component {
   render(){
     return (
       <div className="App">
-        <nav className="d-flex factory-navbar bg-color-app-secondary">
+        <nav className="d-flex bg-color-app-secondary factory-navbar">
           <li className="nav-item no-list-style">
             <select className="form-control ml-2" name="algorithmType" onChange={this.handleChange} value={this.state.algorithmType}>
               <option value="random">Random Search</option>

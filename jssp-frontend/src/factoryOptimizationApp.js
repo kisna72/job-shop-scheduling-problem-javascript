@@ -4,6 +4,7 @@ import Categories from './Pages/Categories';
 import JobEditor from './Pages/Jobs';
 import Parameters from './mainAppComponents/Parameters';
 import "./styles/util.scss";
+import './styles/navbar.scss';
 import App from './App';
 import {
   BrowserRouter as Router,

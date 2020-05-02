@@ -1,4 +1,6 @@
 import React from 'react'
+import "../styles/navbar.scss";
+
 function NavBar(props){
     return (
         <nav className="navbar navbar-expand-lg navbar-dark" style={{backgroundColor:'#34495e'}}>
