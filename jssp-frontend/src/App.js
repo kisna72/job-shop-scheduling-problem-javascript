@@ -302,7 +302,7 @@ class App extends React.Component {
         </div>
         <hr></hr>
         <h6>Schedule with the least makespan</h6>
-        <GanttChart schedule={this.state.schedule}/>
+        <GanttChart schedule={this.state.schedule} machines={this.props.machines}/>
         
 
         <div className="explanation">

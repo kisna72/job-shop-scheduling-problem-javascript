@@ -63,9 +63,12 @@ class FactoryOptimizationApp extends React.Component {
    * 
    */
   createMachine = async (machine) => {
-    machine.id = this.state.machines.length + 1
+    const _machine = {
+      ...machine, 
+      id: this.state.machines.length + 1
+    }
     this.setState({
-      machines: [...this.state.machines,machine]
+      machines: [...this.state.machines,_machine]
     })
   }
   updateMachine = (machine) => {
