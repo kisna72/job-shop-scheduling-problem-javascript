@@ -394,8 +394,12 @@ const workercode = () => {
                     send = currentSimCount % 1 === 0
                 } else if (currentSimCount < 1000){
                     send = currentSimCount % 100 === 0
-                } else {
+                } else if (currentSimCount < 10000) {
                     send = currentSimCount % 1000 === 0
+                } else if (currentSimCount % 100000) {
+                    send = currentSimCount % 100000 === 0
+                } else {
+                    send = currentSimCount % 250000 === 0
                 }
                 if(send){
                     const returnData = {
