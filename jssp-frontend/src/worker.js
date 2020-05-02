@@ -296,7 +296,7 @@ const workercode = () => {
             var funcs = [];
             if (this.maxNumberOfSimulations) {
                 var terminateBasedOnNumberOfSimulations = function (args) {
-                    if (args.currentSimulationIndex > args.maxNumberOfSimulations) {
+                    if (args.currentSimulationIndex >= args.maxNumberOfSimulations) {
                         return true;
                     }
                     return false; //otherwise return false
@@ -323,7 +323,8 @@ const workercode = () => {
             var bestGanttChart;
             var bestMakeSpan = +Infinity;
             var bestMakeSpanIndex = 0;
-            var makeSpanHistory = [];
+            var localMakeSpanHistory = [[],[]];
+            var bestMakeSpanHistory = [[],[]] // first array is for x-axis or sim count, second is for y-axis or makespan
             var defaultTerminationArgs = {
                 currentSimulationIndex: currentSimCount,
                 simulationStartTime: new Date(),
@@ -344,6 +345,12 @@ const workercode = () => {
                 var oned = this.onedArrayOfJobs();
                 var ganttChart = this.oneDToGanttChart(oned);
                 var makespan = this.costFunction(ganttChart);
+
+                if(this.bestMakeSpanLocal === Infinity){
+                    // Adding this just to make chart loook like there is a real restart for cases with hill climbing with restart
+                    localMakeSpanHistory[0].push(currentSimCount - 1);
+                    localMakeSpanHistory[1].push(bestMakeSpan);
+                }
                 //console.log("makespan is ", makespan)
                 if (makespan < bestMakeSpan) {
                     // output global makespan value here.
@@ -361,12 +368,16 @@ const workercode = () => {
                     }
                     postMessage(returnData);
                     sleep(1000) // Allow time for UI to update
+                    bestMakeSpanHistory[0].push(currentSimCount);
+                    bestMakeSpanHistory[1].push(makespan);
                 }
                 if (this.algorithm === JobShopAlgorithmEnum.HILL_CLIMBING_WITH_RESTARTS) {
                     if (makespan < this.bestMakeSpanLocal) {
                         // send makespan value here for hill climbing with restarts...
                         this.bestMakeSpanLocal = makespan;
                         this.best1DSolutionLocal = oned;
+                        localMakeSpanHistory[0].push(currentSimCount);
+                        localMakeSpanHistory[1].push(makespan);
                     }
                 }
                 currentSimCount += 1;
@@ -374,21 +385,6 @@ const workercode = () => {
                 /**
                  * CODE FOR LOGGING TO THE UI 
                  */
-                let newMakeSpanToPushToUI;
-                switch (this.algorithm) {
-                    case JobShopAlgorithmEnum.RANDOM:
-                        newMakeSpanToPushToUI = makespan
-                        break;
-                    case JobShopAlgorithmEnum.HILL_CLIMBING:
-                        newMakeSpanToPushToUI = bestMakeSpan
-                        break;
-                    case JobShopAlgorithmEnum.HILL_CLIMBING_WITH_RESTARTS:
-                        newMakeSpanToPushToUI = this.bestMakeSpanLocal
-                        break;
-                    default:
-                        newMakeSpanToPushToUI = makespan
-                }
-                makeSpanHistory.push(newMakeSpanToPushToUI)
                 let send;
                 if(currentSimCount < 100){
                     send = currentSimCount % 1 === 0
@@ -405,19 +401,29 @@ const workercode = () => {
                     const returnData = {
                         type:'iterationCount',
                         iteration:currentSimCount,
-                        newMakeSpan:makeSpanHistory
+                        localMakeSpanHistory:localMakeSpanHistory,
+                        bestMakeSpanHistory: bestMakeSpanHistory
                     }
                     postMessage(returnData);
                     //sleep(200) // Give UI thread enough time to render this.
-                    makeSpanHistory.length = 0 // delete the array
+                    localMakeSpanHistory[0].length = 0 // delete the array
+                    localMakeSpanHistory[1].length = 0 // delete the array
+                    bestMakeSpanHistory[0].length = 0;
+                    bestMakeSpanHistory[1].length = 0;
                 }
             }
             // clear one last time ... 
-            if(makeSpanHistory.length > 0 ){
+            if(bestMakeSpanHistory.length > 0 ){
+                console.log("sending last round of data.")
+                bestMakeSpanHistory[0].push(currentSimCount);
+                bestMakeSpanHistory[1].push(bestMakeSpan);                
+                localMakeSpanHistory[0].push(currentSimCount);
+                localMakeSpanHistory[1].push(bestMakeSpan);
                 const returnData = {
                     type:'iterationCount',
                     iteration:currentSimCount,
-                    newMakeSpan:makeSpanHistory
+                    bestMakeSpanHistory,
+                    localMakeSpanHistory,
                 }
                 postMessage(returnData);
             }

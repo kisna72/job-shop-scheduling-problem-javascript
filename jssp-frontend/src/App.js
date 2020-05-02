@@ -107,9 +107,12 @@ class App extends React.Component {
       // {"type":"iterationCount","value":200}
       // {"type":"newSchedule","value":[[],...]}
       if(e.data && e.data.type === "iterationCount"){
-        const newYData = [...this.state.uPlotRef.data[1], ...e.data.newMakeSpan]
-        const newXData = new Array(newYData.length).fill(0).map( (v,i) => i )
-        // this.state.uPlotRef.delSeries(0);
+        let dataSource = "bestMakeSpanHistory";
+        if(this.state.algorithmType === "hillClimbingRestarts"){
+          dataSource = "localMakeSpanHistory";
+        }
+        const newXData = [...this.state.uPlotRef.data[0], ...e.data[dataSource][0]]
+        const newYData = [...this.state.uPlotRef.data[1], ...e.data[dataSource][1]]
         this.state.uPlotRef.setData([newXData, newYData], true)
       }
       else if(e.data && e.data.type === "newSchedule"){
@@ -156,7 +159,7 @@ class App extends React.Component {
           stroke:"rgb(18, 147, 154)",
           label: "Makespan",
           width:2
-        }
+        },
       ],
       axes:[
         {
@@ -213,7 +216,6 @@ class App extends React.Component {
     this.state.workerInstance.terminate();
   }
   render(){
-    const screenWidth = (window.innerWidth - 60)
     return (
       <div className="App">
         <nav className="d-flex factory-navbar bg-color-app-secondary">
